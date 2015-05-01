@@ -82,27 +82,27 @@ Syntax / Contstructs Jiphy Suppports
 ===================
 | Python        | JavaScript        | Supported To JavaScript | Supported To Python |
 | ------------- |:-----------------:|:-----------------------:|:-------------------:|
-| def (...):    | function(...) {}  | [x]                     | [x]                 |
-| if ...:       | if (...) {}       | [x]                     | [x]                 |
-| elif ...:     | } else if (...) { | [x]                     | [x]                 |
-| else:         | } else {          | [x]                     | [x]                 |
-| pass          | {}                | [x]                     | [x]                 |
-| print(...)    | console.log(...)  | [x]                     | [x]                 |
-| True          | true              | [x]                     | [x]                 |
-| False         | false             | [x]                     | [x]                 |
-| None          | null              | [x]                     | [x]                 |
-| Or            | &#124;&#124;                | [x]                     | [x]                 |
-| And           | &&                | [x]                     | [x]                 |
-| Unset         | undefined         | [x]                     | [x]                 |
-| not           | !                 | [x]                     | [x]                 |
-| is            | ===               | [x]                     | [x]                 |
-| del           | delete            | [x]                     | [x]                 |
-| \n            | ;\n               | [x]                     | [x]                 |
-| # comment     | // comment        | [x]                     | [x]                 |
-| import x      | var x = require(x)| [x]                     | [ ]                 |
-| import x as _ | var _ = require(x)| [x]                     | [ ]                 |
-| "String"      | 'String'          | [x]                     | [ ]                 |
-| """String"""  | 'Str' + 'ing'     | [x]                     | [ ]                 |
+| def (...):    | function(...) {}  |  ✓                      |  ✓                  |
+| if ...:       | if (...) {}       |  ✓                      |  ✓                  |
+| elif ...:     | } else if (...) { |  ✓                      |  ✓                  |
+| else:         | } else {          |  ✓                      |  ✓                  |
+| pass          | {}                |  ✓                      |  ✓                  |
+| print(...)    | console.log(...)  |  ✓                      |  ✓                  |
+| True          | true              |  ✓                      |  ✓                  |
+| False         | false             |  ✓                      |  ✓                  |
+| None          | null              |  ✓                      |  ✓                  |
+| Or            | &#124;&#124;                | ✓                        |  ✓                  |
+| And           | &&                |  ✓                      |  ✓                  |
+| Unset         | undefined         |  ✓                      |  ✓                  |
+| not           | !                 |  ✓                      |  ✓                  |
+| is            | ===               |  ✓                      |  ✓                  |
+| del           | delete            |  ✓                      |  ✓                  |
+| \n            | ;\n               |  ✓                      |  ✓                  |
+| # comment     | // comment        |  ✓                      |  ✓                  |
+| import x      | var x = require(x)|  ✓                      |                     |
+| import x as _ | var _ = require(x)|  ✓                      |                     |
+| "String"      | 'String'          |  ✓                      |                     |
+| """String"""  | 'Str' + 'ing'     |  ✓                      |                     |
 |
 
 Installing jiphy
