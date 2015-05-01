@@ -8,9 +8,12 @@
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/timothycrosley/jiphy/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Write your client side code in a Jiphy! Jiphy is a two-way Python->Javascript converter. It's not meant to create
-runnable Python code from comlex JavaScript files, or runnable JavaScript from comples Python projects. Instead,
+runnable Python code from comlex JavaScript files, or runnable JavaScript from complex Python projects. Instead,
 Jiphy enables Python programmers to more easily write JavaScript code by allowing them to use more familiar syntax,
 and even JavaScript developers to more easily write Python code.
+
+As a Python developer you can convert existing code in someone else's project from JavasScript into Python, edit it,
+and then convert it back before submitting.
 
 Jiphy's Design Objectives:
 
@@ -27,7 +30,7 @@ Write:
 
     def my_function(argument1, argument2):
         if argument1:
-            delete argument2
+            del argument2
         elif argument2:
             print(argument2)
 
@@ -38,9 +41,9 @@ Get:
 
     var _ = require('_');
 
-    function my_function(arguent1, argument2) {
+    function my_function(argument1, argument2) {
         if (argument1) {
-            del argument2;
+            delete argument2;
         } else if (argument2) {
             console.log(argument2);
         }
@@ -48,6 +51,41 @@ Get:
     }
 
 in a jiphy.
+
+
+Important things to know when writing Python for conversion to JavaScript
+===================
+
+- Every indented block must have a line after it. For instance:
+
+    if something is True:
+        do_something()
+
+    print("done")
+
+Is valid as the if statement has a new line after it. Howver:
+
+    if something is True:
+        do_something()
+    print("done")
+
+is NOT valid in Jiphy. The lack of a new line makes it impossible to do a 1:1 conversion and still be nicely formatted JS code.
+
+- Jiphy isn't smart enough to know when to create a var
+
+For now, you still have to write var infront of new variables in Jiphy. Jiphy simply does not yet have the smarts to know when it is and when it is not required.
+
+- Jiphy does not implement stdlib components, classes, etc. It's SYNTAX ONLY.
+
+
+Syntax / Contstructs Jiphy Suppports
+===================
+| Python        | JavaScript    | Supported To JavaScript | Supported To Python |
+| ------------- |:-------------:| -----------------------:|:--------------------|
+| ):
+| "String"      | 'String' | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
 
 Installing jiphy
 ===================
