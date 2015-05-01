@@ -34,7 +34,7 @@ class Parser(object):
 
     def text_till(self, strings):
         """Returns all text till it encounters the given string (or one of the given strings)"""
-        if isinstance(strings, (str, unicode)):
+        if isinstance(strings, str):
             strings = [strings]
 
         text = ""
