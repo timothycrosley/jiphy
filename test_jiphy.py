@@ -25,13 +25,16 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import jiphy
 
 
-def two_way_conversion_test(python_code, javascript_code):
+def two_way_conversion_test(python_code, javascript_code, expect_python=None, expect_javascript=None):
     """Tests that the given Python_code will turn into the specified JavaScript and visa versa in a Jiphy.
        Additionaly, ensures that if the python code is passed into the python converter it stays as Python
        and if the given JavaScript code is passed into the javascript converter they get return unmodified
     """
-    assert jiphy.to.javascript(python_code) == javascript_code
-    assert jiphy.to.python(javascript_code) == python_code
+    expect_javascript = expect_javascript or javascript_code
+    expect_python = expect_python or python_code
+
+    assert jiphy.to.javascript(python_code) == expect_javascript
+    assert jiphy.to.python(javascript_code) == expect_python
 
     assert jiphy.to.javascript(javascript_code) == javascript_code
     assert jiphy.to.python(python_code) == python_code
@@ -41,8 +44,10 @@ def test_import_conversion():
     """Tests to ensure that converting Python imports to JavaScript imports and vice versa works in a Jiphy."""
     two_way_conversion_test(("import something\n"
                              "import underscore as _\n"),
-                            ("var something = require('something.js');\n"
-                             "var _ = require('underscore.js');\n"))
+                            ("var something = require('something');\n"
+                             "var _ = require('underscore');\n"),
+                            ("var something = require('something')\n"
+                             "var _ = require('underscore')\n"))
 
 
 def test_noop_function_conversion():
@@ -75,7 +80,7 @@ def boolean_test():
 
 def test_condition():
     """Test to ensure basic conditionals get converted in a jiphy"""
-    two_way_conversion_test(("if something is true:\n"
+    two_way_conversion_test(("if something is True:\n"
                              "    do_something()\n"
                              "\n"),
                             ("if (something === true) {\n"
@@ -92,23 +97,23 @@ def test_is():
 def test_not():
     """Test to nesure not statements are correct handled in a jiphy"""
     two_way_conversion_test(("True is not True\n"
-                             "true = not True\n"),
+                             "True = not True\n"),
                             ("true !== true;\n"
                              "true = !true;\n"))
 
 def test_for_loop():
     """Test to ensure that for loops will convert correctly"""
-    two_way_conversion_test(("for x = 0; x < 10; x++:\n"
-                             "    y = x;\n"
+    two_way_conversion_test(("for var x = 0; x < 10; x++:\n"
+                             "    var y = x\n"
                              "\n"),
-                            ("for (var x = 0; x = 10; x++) {\n"
+                            ("for (var x = 0; x < 10; x++) {\n"
                              "    var y = x;\n"
                              "}\n"))
 
 
 def test_variables():
     """Test to ensure that vars will be correctly handled"""
-    two_way_conversion_test("x = 10\n", "var x = 10;\n")
+    two_way_conversion_test("var x = 10\n", "var x = 10;\n")
 
 
 def test_delete():
@@ -120,7 +125,7 @@ def test_elif():
     """Test to ensure elif works as expected"""
     two_way_conversion_test(("if x == y:\n"
                              "    print('one')\n"
-                             "elif true:\n"
+                             "elif True:\n"
                              "    print('two')\n"
                              "\n"),
                             ("if (x == y) {\n"
@@ -134,8 +139,10 @@ def test_pass():
     """Test to ensure pass is correctly converted"""
     two_way_conversion_test(("if x:\n"
                              "    pass\n"
+                             "\n"
                              "\n"),
                             ("if (x) {\n"
+                             "    \n"
                              "\n"
                              "}\n"))
 
@@ -147,9 +154,15 @@ def test_comments():
                              '"""\n'),
                             ('/* Test comment\n'
                              '    line two\n'
-                             '*/\n'))
+                             ' */\n'))
     two_way_conversion_test("# comment\n",
                             "// comment\n")
+    two_way_conversion_test(('""""\n'
+                             '    Test Comment\n'
+                             '"""\n'),
+                            ('/**\n'
+                             '    Test Comment\n'
+                             ' */\n'))
 
 
 def test_multi_line_string():
@@ -157,5 +170,36 @@ def test_multi_line_string():
     two_way_conversion_test(("print('''line one\n"
                              "         line two''')\n"),
                             ("console.log('line one\\n' +\n"
-                             "            'line two')\n"))
+                             "'         line two');\n"),
+                            ("print('line one\\n' +\n"
+                             "'         line two')\n"))
+
+
+def test_assigned_function():
+    """Test to ensure assigning a function works as expected"""
+    two_way_conversion_test("exports.schema = def(argument1, argument2):\n"
+                            "  print(argument1)\n"
+                            "\n",
+                            "exports.schema = function(argument1, argument2) {\n"
+                            "  console.log(argument1);\n"
+                            "};\n")
+    two_way_conversion_test("exports.schema = def(argument1, argument2):\n"
+                            "  print(argument1)\n"
+                            "\n",
+                            "exports.schema = function(argument1, argument2) {\n"
+                            "  console.log(argument1);\n"
+                            "};\n")
+
+
+def test_magic_function():
+    """Test to ensure assigning a function works as expected"""
+    two_way_conversion_test("=def schema(argument1, argument2):\n"
+                            "  print(argument1)\n"
+                            "\n",
+                            "module.exports.schema = function(argument1, argument2) {\n"
+                            "  console.log(argument1);\n"
+                            "};\n",
+                            "module.exports.schema = def(argument1, argument2):\n"
+                            "  print(argument1)\n"
+                            "\n")
 

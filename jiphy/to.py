@@ -19,14 +19,17 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
 
+from .handlers import Handler
 from .parser import Parser
-from .handlers import RootHandler
+from .pie_slice import *
 
 
 def ast(code):
     """Takes the given Python or JavaScript code and returns back a rough Abstract Syntax Tree representation"""
-    return RootHandler(Parser(code))
+    return Handler(Parser(code))
+
 
 def javascript(code):
     """Takes the given Python or JavaScript code and returns back JavaScript code"""
@@ -36,4 +39,3 @@ def javascript(code):
 def python(code):
     """Takes the given JavaScript or Python code and returns back Python code"""
     return ast(code).python
-

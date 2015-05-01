@@ -42,13 +42,12 @@ except (IOError, ImportError, OSError, RuntimeError):
    readme = ''
 
 setup(name='jiphy',
-      version='0.0.1',
+      version='1.0.0',
       description='A Python to JavaScript two way converter. Your client side done in a Jiphy.',
       long_description=readme,
       author='Timothy Crosley',
       author_email='timothy.crosley@gmail.com',
       url='https://github.com/timothycrosley/jiphy',
-      download_url='https://github.com/timothycrosley/jiphy/archive/0.0.1.tar.gz',
       license="MIT",
       entry_points={
         'console_scripts': [
@@ -56,8 +55,8 @@ setup(name='jiphy',
         ]
       },
       packages=['jiphy'],
-      requires=['pies', 'natsort'],
-      install_requires=['pies>=2.6.2', 'natsort>=3.0.0'],
+      requires=[],
+      install_requires=[],
       cmdclass={'test': PyTest},
       keywords='Refactor, Python, Python2, Python3, Refactoring, JavaScript, Converter, Transform, Convert',
       classifiers=['Development Status :: 6 - Mature',

@@ -1,36 +1,124 @@
+"""jiphy/handlers.py
+
+The core of jiphy logic, defines what text get's matched, what handler will represent it, and how it will
+be outputed depending on desired programming language
+
+Copyright (C) 2015  Timothy Edmund Crosley
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or
+substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+"""
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+from .pie_slice import *
 from .router import Router
 
 routes = Router()
 
 
-class Handler(object):
+class AbstractHandler(object):
+    __slots__ = ('parent', 'index')
+    started_on = ""
+    javascript = ""
+    python = ""
+    children = ()
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.index = parent and len(parent.children) or 0
+
+    @property
+    def prev(self):
+        if self.index > 0:
+            return self.parent and self.parent.children[self.index - 1]
+
+    @property
+    def next(self):
+        if self.parent and self.index < len(self.parent.children) -1:
+            return self.parent.children[self.index + 1]
+
+    def __repr__(self):
+        self_representation = "{0}({1})".format(self.__class__.__name__, self.index)
+        if self.started_on:
+            self_representation = "{0} <-- {1}".format(self_representation, self.started_on)
+
+        representation = [self_representation]
+        for child in self:
+            for index, line in enumerate(repr(child).split("\n")):
+                if index == 0:
+                    representation.append("|---" + line)
+                else:
+                    representation.append("|  " + line)
+        return "\n".join(representation)
+
+    def __str__(self):
+        return ("====================================JS=================================\n"
+                "{0}\n"
+                "====================================PY=================================\n"
+                "{1}\n").format(self.javascript, self.python)
+
+    def __iter__(self):
+        return self.children.__iter__()
+
+
+class Handler(AbstractHandler):
     """A Handler encapsulates both the node / position information in the produced AST alongside the code used
        to generate the nodes contained within it"""
     start_on = ()
     end_on = ()
+    yield_for = ()
     accept_children = routes
     back_track = 0
 
     def __init__(self, parser, started_on='', started_at=0, parent=None):
+        AbstractHandler.__init__(self, parent)
         self.parser = parser
-        self.parent = parent
+        self.index = parent and len(parent.children) or 0
         self.children = []
         self.started_on = started_on
         self.started_at = started_at
+        self.start_index = started_at - len(started_on) + 1
         self.ended_on = ''
         self.ended_at = 0
-        if isinstance(self.end_on, (str, unicode)):
+        if isinstance(self.end_on, str):
             self.end_on = (self.end_on, )
+        if isinstance(self.yield_for, str):
+            self.yield_for = (self.yield_for, )
 
         self.start()
 
+    def __getitem__(self, index):
+        return self.children[index]
+
+    def handle(self):
+        pass
+
+    @property
+    def last_child(self):
+        return self.children and self.children[-1]
+
     def start(self):
-        if not self.end_on:
+        self.handle()
+        if not self.end_on and self.parent:
+            self.parser -= self.back_track or 0
+            self.ended_at = self.parser.index
             return
 
         while self.parser.more:
-            (text, matched) = self.parser.text_till(self.end_on + self.accept_children.match_on)
-            self.children.append(PassThrough(text))
+            (text, matched) = self.parser.text_till(self.yield_for + self.end_on + self.accept_children.match_on)
+            if text:
+                self.children.append(PassThrough(text, self))
             if matched in self.end_on:
                 self.parser += len(matched) - 1
                 self.ended_on = matched
@@ -45,15 +133,21 @@ class Handler(object):
                 self.children.append(handler(self.parser, matched, self.parser.index - 1, parent=self))
                 handler.ended_at = self.parser.index
             else:
-                raise NotImplementedError('There is no support to handle ' + parser)
+                raise NotImplementedError('There is no support to handle ' + matched)
 
-        self.parser -= self.back_track
+        self.parser -= self.back_track or 0
         self.ended_at = self.parser.index
+
+    @property
+    def leading_whitespace(self):
+        if self.started_on.startswith('^'):
+            return self.parser.code[self.start_index]
+
+        return ""
 
     @property
     def javascript_content(self):
         return "".join((child.javascript for child in self.children))
-
 
     def _javascript(self):
         return (self.started_on or '') + self.javascript_content + (self.ended_on or '')
@@ -77,36 +171,20 @@ class Handler(object):
         return self.parser.behind(self.started_at, amount)
 
     def ahead(self, amount=1):
-        return self.parser.ahead(self.started_at, amount)
+        return self.parser.ahead(self.ended_at, amount)
+
+    def next_content(self, amount=1):
+        return self.parser.next_content(self.ended_at, amount)
+
+    def prev_content(self, amount=1):
+        return self.parser.next_content(self.started_at, amount)
 
 
-class RootHandler(Handler):
+class PassThrough(AbstractHandler):
+    __slots__ = ('code')
 
-    def start(self):
-        while self.parser.more:
-            (text, matched) = self.parser.text_till(self.accept_children.match_on)
-            self.children.append(PassThrough(text))
-            if matched in self.end_on:
-                self.ended_on = self.end_on
-                break
-
-            if not matched:
-                break
-
-            handler = self.accept_children.get(matched, None)
-            if handler:
-                self.parser += len(matched) - 1
-                self.children.append(handler(self.parser, matched, self.parser.index - 1, parent=self))
-            else:
-                raise NotImplementedError('There is no support to handle ' + parser)
-
-        self.parser -= self.back_track
-        self.ended_at = self.parser.index
-
-class PassThrough(object):
-    __slots__ = ('code', )
-
-    def __init__(self, code):
+    def __init__(self, code, parent):
+        AbstractHandler.__init__(self, parent)
         self.code = code
 
     @property
@@ -118,11 +196,11 @@ class PassThrough(object):
         return self.code
 
 
-routes.add('\\')
+@routes.add('\\')
 class Escape(Handler):
 
     def start(self):
-        self.children.append(PassThrough(self.parser.pop()))
+        self.children.append(PassThrough(self.parser.pop(), self))
 
 
 class MultiLineComment(Handler):
@@ -133,6 +211,25 @@ class MultiLineComment(Handler):
 
     def _python(self):
         return '"""{0}"""'.format(self.python_content)
+
+
+class JavaDocComment(MultiLineComment):
+
+    def _javascript(self):
+        return '/**\n{0}\n */'.format(self.javascript_content)
+
+    def _python(self):
+        return '""""\n{0}\n"""'.format(self.python_content)
+
+
+@routes.add('/**\n')
+class JavaScriptJavaDoc(JavaDocComment):
+    end_on = '\n */'
+
+
+@routes.add('""""\n')
+class PythonJavaDoc(JavaDocComment):
+    end_on = '\n"""'
 
 
 @routes.add('"""')
@@ -157,10 +254,25 @@ class String(Handler):
 
         output = []
         for line in content[:-1]:
-             output.append("'{0}\n' + ".format(line))
+             output.append("'{0}\\n' +".format(line))
 
-        output.append(content[-1])
+        output.append("'{0}'".format(content[-1]))
         return "\n".join(output)
+
+
+@routes.add("'")
+class BasicString(Handler):
+    accept_children = Router((Escape, '\\'))
+    end_on = "'"
+
+
+@routes.add('"')
+class PythonBasicString(Handler):
+    accept_children = Router((Escape, '\\'))
+    end_on = '"'
+
+    def _javascript(self):
+        return ("'{0}'".format(self.javascript_content))
 
 
 @routes.add('# ', '// ')
@@ -191,12 +303,12 @@ class PythonImport(Handler):
         if "as" in content:
             variable_name = content[content.index('as') + 1]
         else:
-            variable_name = to_import
+            variable_name = to_import.split("/")[-1]
 
         if self.ended_on == " #":
             self.ended_on = " "
 
-        return "var {0} = require('{1}.js');{2}".format(variable_name, to_import, self.ended_on)
+        return "var {0} = require('{1}');{2}".format(variable_name, to_import, self.ended_on)
 
 
 @routes.add("): pass\n", ") {}\n")
@@ -252,20 +364,56 @@ class PrintFunction(Handler):
 @routes.add('var ')
 class JavascriptSetter(Handler):
     accept_children = Router()
-    end_on = (";")
-
-    def _python(self):
-        return "{0};".format(self.python_content)
 
 
 @routes.add('function ', 'def ')
 class Function(Handler):
+    end_on = ("):\n", ") {\n")
+
+    @property
+    def back_track(self):
+        if self.ended_on == "):\n":
+            return 2
+        elif self.ended_on == ") {\n":
+            return 4
 
     def _python(self):
-        return "def "
+        to_return = "def " + self.python_content
+        if self.ended_on == self.end_on[0]:
+            return "def " + self.python_content + ")"
+
+        return to_return
 
     def _javascript(self):
-        return "function "
+        return "function " + self.javascript_content
+
+
+@routes.add('^function(', '^def(')
+class AnonymousFunction(Function):
+
+    def _python(self):
+        to_return = self.leading_whitespace + "def(" + self.python_content
+        if self.ended_on == self.end_on[0]:
+            to_return += ")"
+
+        return to_return
+
+    def _javascript(self):
+        return self.leading_whitespace + "function(" + self.javascript_content
+
+
+@routes.add('=def ')
+class ExportFunction(Handler):
+    end_on = "):\n"
+    back_track = 2
+
+    def _python(self):
+        return Handler._python(self)[:-2]
+
+    def _javascript(self):
+        parts = self.javascript_content.split("(")
+        return "module.exports.{0} = function({1}".format(parts[0], "(".join(parts[1:]),
+                                                          self.javascript_content.split("("))
 
 
 @routes.add('del ', 'delete ')
@@ -278,22 +426,34 @@ class DeleteStatement(Handler):
         return "del "
 
 
-@routes.add('if (')
-class JavascriptIfStatement(Handler):
-    end_on = ') {\n'
-    back_track = 4
+@routes.add('if (', 'if ')
+class IfStatement(Handler):
+    end_on = ('):\n', ':\n', ') {\n')
+
+    @property
+    def back_track(self):
+        if self.ended_on in ("):\n", ":\n"):
+            return 2
+        else:
+            return 4
 
     def _python(self):
-        return "if {0}".format(self.python_content)
+        to_return = "if {0}".format(self.python_content)
+        if self.ended_on == "):\n":
+            to_return += ")"
 
-
-@routes.add('if ')
-class PythonIfStatement(Handler):
-    end_on = ':\n'
-    back_track = 2
+        return to_return
 
     def _javascript(self):
-        return "if ({0}".format(self.javascript_content)
+        if self.ended_on == ":\n" and self.started_on == 'if (':
+            to_return = "if (({0}".format(self.javascript_content)
+        else:
+            to_return = "if ({0}".format(self.javascript_content)
+
+        if self.ended_on == "):\n":
+            to_return += ")"
+
+        return to_return
 
 
 @routes.add('for (', 'for ')
@@ -306,34 +466,123 @@ class ForStatement(Handler):
         return 'for ('
 
 
-@routes.add('elif ', 'else if ')
+@routes.add('elif ', '^} else if (')
 class ElifStatement(Handler):
+    end_on = (":\n", ") {\n")
 
     def _python(self):
-        return 'elif '
+        return self.leading_whitespace + 'elif ' + self.python_content + ":\n"
 
     def _javascript(self):
-        return 'else if '
+        return self.leading_whitespace + '} else if (' + self.javascript_content + ") {\n"
 
+
+@routes.add('else:\n', '^} else {\n')
+class ElseStatement(Handler):
+
+    def _python(self):
+        return self.leading_whitespace + 'else:\n'
+
+    def _javascript(self):
+        return self.leading_whitespace + '} else {\n'
+
+
+class Block(Handler):
+
+    def handle(self):
+        self.indent = ''
+        line = self.parser.text_after(self.started_at - 2, '\n')
+        for character in line:
+            if character in (" ", "\t"):
+                self.indent += character
+            else:
+                break
 
 
 @routes.add('):\n', ':\n')
-class PythonBlock(Handler):
-    end_on = '\n\n'
+class PythonBlock(Block):
+    end_on = ('\n\n', ')', '    , ')
+
+    @property
+    def back_track(self):
+        if self.ended_on == ")" and isinstance(self.parent, Parens):
+            return 1
 
     def _javascript(self):
-        content = ") {\n" + self.javascript_content
-        if self.javascript_content and not self.javascript_content.strip().endswith(";"):
+        content = ") {\n" + self.javascript_content.rstrip(" ").rstrip("\t")
+
+        extra = ""
+        if self.ended_on == self.end_on[1]:
+            extra = ")"
+        elif self.ended_on == self.end_on[2]:
+            extra = ", "
+
+        last_child = self.last_child
+        if last_child:
+            last_child_index = len(self.children) - 1
+            while (not self.children[last_child_index].javascript.strip() and not
+                   isinstance(last_child, PythonNoop) and last_child_index > 0):
+                self.children[last_child_index] = PassThrough('', self)
+                last_child_index -= 1
+            last_child = self.children[last_child_index]
+        if isinstance(last_child, PythonBlock) and last_child.javascript.endswith("\n"):
+            content += self.indent + "}" + extra
+            if(isinstance(self.prev, (ExportFunction, AnonymousFunction)) and not self.ahead() in (".", "(", ";")
+               and not extra == ", "):
+                content += ";"
+            if not extra:
+                content += "\n\n"
+            return content
+        if(not self.javascript_content.replace("\n", "").strip().endswith(";") and not
+           isinstance(last_child, PythonNoop) and not self.ahead() in (".", "(", ";") and not
+           extra == ", "):
             content += ";"
-        return content + "\n}\n"
+
+        if extra:
+            content += self.indent + "}" + extra
+        else:
+            content += "\n" + self.indent + "}"
+        if(isinstance(self.prev, (ExportFunction, AnonymousFunction)) and not self.ahead() in (".", "(", ";")
+           and not extra == ", "):
+            content += ";"
+
+        if not extra:
+            content += "\n"
+
+        return content
 
 
 @routes.add(') {\n')
-class javascriptBlock(Handler):
-    end_on = "\n}\n"
+class JavascriptBlock(Block):
+    end_on = ("};", "}")
 
     def _python(self):
-        return ":\n{0}\n\n".format(self.python_content)
+        if not self.python_content.strip():
+            to_return = ":\n{0}pass\n\n".format(self.indent + "    ")
+        else:
+            to_return = ":\n{0}".format(self.python_content)
+        if isinstance(self.prev, Function):
+            to_return = ")" + to_return
+
+        return to_return
+
+
+@routes.add('(')
+class Parens(Handler):
+    end_on = ")"
+    yield_for = ") {\n"
+
+    def _javascript(self):
+        if isinstance(self.last_child, PythonBlock) and self.last_child.ended_on == ")":
+            return "(" + self.javascript_content
+
+        return Handler._javascript(self)
+
+    def _python(self):
+        if isinstance(self.last_child, PythonBlock) and self.last_child.ended_on == ")":
+            return "(" + self.python_content
+
+        return Handler._python(self)
 
 
 @routes.add('{')
@@ -371,6 +620,16 @@ class NotStatement(Handler):
         return ' !'
 
 
+@routes.add('not ', '!')
+class NotStatement(Handler):
+
+    def _python(self):
+        return 'not '
+
+    def _javascript(self):
+        return '!'
+
+
 @routes.add('Unset', 'undefined')
 class Unset(Handler):
 
@@ -381,21 +640,21 @@ class Unset(Handler):
         return 'undefined'
 
 
-@routes.add('And ', '&& ')
-class EndOfStatement(Handler):
+@routes.add('and ', '&& ')
+class AndKeyword(Handler):
 
     def _python(self):
-        return 'And '
+        return 'and '
 
     def _javascript(self):
         return '&& '
 
 
-@routes.add('Or ', '|| ')
-class EndOfStatement(Handler):
+@routes.add('or ', '|| ')
+class OrKeyword(Handler):
 
     def _python(self):
-        return 'Or '
+        return 'or '
 
     def _javascript(self):
         return '|| '
@@ -408,14 +667,41 @@ class PythonNoop(Handler):
         return '\n'
 
 
-@routes.add(';\n', '\n')
+@routes.add(';\n')
 class EndOfStatement(Handler):
+    back_track = 1
+
+    def _python(self):
+        return ''
+
+    def _javascript(self):
+        if self.behind() in ('\n', ' ', '\t', '/') or isinstance(self.prev, MultiLineComment):
+            return ''
+
+        return ';'
+
+
+@routes.add('\n')
+class EndOfLine(Handler):
 
     def _python(self):
         return '\n'
 
     def _javascript(self):
-        if self.behind() in ('\n', ' ', '\t'):
-            return '\n'
+        if self.behind() in ('\n', ' ', '\t', '/', ',', '{', '+'):
+            return "\n"
+        if(isinstance(self.prev, (EndOfStatement, Block)) or isinstance(self.parent, Dictionary) or
+           isinstance(self.prev, MultiLineComment) or
+           self.next_content() in (';', '.', '(')):
+            return "\n"
+        elif(isinstance(self.prev, Parens) and isinstance(self.prev.last_child, PythonBlock) and
+             self.prev.last_child.ended_on == ")"):
+            return "\n"
 
         return ';\n'
+
+
+IfStatement.accept_children = routes.excluding('(')
+Function.accept_children = IfStatement.accept_children
+ElifStatement.accept_children = IfStatement.accept_children
+ExportFunction.accept_children = IfStatement.accept_children

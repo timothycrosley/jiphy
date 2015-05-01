@@ -1,7 +1,9 @@
 #! /usr/bin/env python
-'''  Tool for sorting imports alphabetically, and automatically separated into sections.
+"""jiphy/main.py
 
-Copyright (C) 2013  Timothy Edmund Crosley
+Defines the terminal interface for Jiphy
+
+Copyright (C) 2015 Timothy Edmund Crosley
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -17,122 +19,127 @@ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABI
 CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-'''
+"""
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import argparse
 import os
 import sys
+from argparse import RawTextHelpFormatter
+from datetime import datetime
+from difflib import unified_diff
 
-from pies.overrides import *
+import jiphy
 
-from jiphy import SECTION_NAMES, SortImports, __version__
+from .pie_slice import *
 
 
-def iter_source_code(paths):
+INTRO = """
+ /##########################################################\\
+ ............................................................
+ ...................................................... .....
+ ...7$$$$.............$$$$$........MM.M:.MMMM. M,..M:MM .MM..
+ .I$I~~=~$$.7M$$$M$7$$?====$$......MM.M:.M...M.M,..M: M .M ..
+ I$~~~~~~~$NZ$$$$$$8$=~~~~~~~$.....MM.M:.MMMMM.MMMMM:..MM ...
+ $=~~~~~~=$$$M$$$NZ$$7~=~~~~~=$.MM.MM.M:.M.....M,..M:..MM....
+ 7~~~~~~~$$$/_$$$_\$$$~~~~~~==$. MMO .M:.M ....M,..M:..MM....
+ $~~~~~~~$$$$$Z$$Z7$$$=~~~~~~~$..............................
+ $=~~~~~~$$$$$$$$$$$$$=~~~~~~$.. ....... ....................
+  $$~~~~~$$|$$$$$$$$|$~~~~=$.7777777...... ..................
+ ...$$$$$$$M\$$$$$$/M$$$$$7,$77777777:..YOUR CLIENTSIDE DONE.
+ . .......$$D\$$$$/M$~. ..=777777777?.... .. ........ .......
+ ...........,7$$$$$7777777777777..................... .......
+ ..............777777777777777......... ............... .....
+ ...............77777777777................VERSION 1.0.......
+ ........ ...................................................
+ ............................................................
+ \##########################################################/
+
+ Copyright (C) 2015 Timothy Edmund Crosley
+ Under the MIT License
+
+"""
+
+
+def iter_source_code(paths, in_ext="py"):
     """Iterate over all Python source files defined in paths."""
     for path in paths:
         if os.path.isdir(path):
             for dirpath, dirnames, filenames in os.walk(path):
                 for filename in filenames:
-                    if filename.endswith('.py'):
+                    if filename.endswith('.' + in_ext):
                         yield os.path.join(dirpath, filename)
         else:
             yield path
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Sort Python import definitions alphabetically '
-                                                 'within logical sections.')
-    parser.add_argument('files', nargs='+', help='One or more Python source files that need their imports sorted.')
-    parser.add_argument('-l', '--lines', help='[Deprecated] The max length of an import line (used for wrapping long imports).',
-                        dest='line_length', type=int)
-    parser.add_argument('-w', '--line-width', help='The max length of an import line (used for wrapping long imports).',
-                        dest='line_length', type=int)
-    parser.add_argument('-s', '--skip', help='Files that sort imports should skip over.', dest='skip', action='append')
-    parser.add_argument('-ns', '--dont-skip', help='Files that sort imports should never skip over.',
-                        dest='not_skip', action='append')
-    parser.add_argument('-t', '--top', help='Force specific imports to the top of their appropriate section.',
-                        dest='force_to_top', action='append')
-    parser.add_argument('-f', '--future', dest='known_future_library', action='append',
-                        help='Force sortImports to recognize a module as part of the future compatibility libraries.')
-    parser.add_argument('-b', '--builtin', dest='known_standard_library', action='append',
-                        help='Force sortImports to recognize a module as part of the python standard library.')
-    parser.add_argument('-o', '--thirdparty', dest='known_third_party', action='append',
-                        help='Force sortImports to recognize a module as being part of a third party library.')
-    parser.add_argument('-p', '--project', dest='known_first_party', action='append',
-                        help='Force sortImports to recognize a module as being part of the current python project.')
-    parser.add_argument('-m', '--multi_line', dest='multi_line_output', type=int, choices=[0, 1, 2, 3, 4, 5],
-                        help='Multi line output (0-grid, 1-vertical, 2-hanging, 3-vert-hanging, 4-vert-grid, '
-                            '5-vert-grid-grouped).')
-    parser.add_argument('-i', '--indent', help='String to place for indents defaults to "    " (4 spaces).',
-                        dest='indent', type=str)
-    parser.add_argument('-a', '--add_import', dest='add_imports', action='append',
-                        help='Adds the specified import line to all files, '
-                             'automatically determining correct placement.')
-    parser.add_argument('-af', '--force_adds', dest='force_adds', action='store_true',
-                        help='Forces import adds even if the original file is empty.')
-    parser.add_argument('-r', '--remove_import', dest='remove_imports', action='append',
-                        help='Removes the specified import from all files.')
-    parser.add_argument('-ls', '--length_sort', help='Sort imports by their string length.',
-                        dest='length_sort', action='store_true', default=False)
-    parser.add_argument('-d', '--stdout', help='Force resulting output to stdout, instead of in-place.',
-                        dest='write_to_stdout', action='store_true')
-    parser.add_argument('-c', '--check-only', action='store_true', default=False, dest="check",
-                        help='Checks the file for unsorted imports and prints them to the '
-                             'command line without modifying the file.')
-    parser.add_argument('-sl', '--force_single_line_imports', dest='force_single_line', action='store_true',
-                        help='Forces all from imports to appear on their own line')
-    parser.add_argument('-sd', '--section-default', dest='default_section',
-                        help='Sets the default section for imports (by default FIRSTPARTY) options: ' +
-                        str(SECTION_NAMES))
-    parser.add_argument('-df', '--diff', dest='show_diff', default=False, action='store_true',
-                        help="Prints a diff of all the changes jiphy would make to a file, instead of "
-                             "changing it in place")
-    parser.add_argument('-e', '--balanced', dest='balanced_wrapping', action='store_true',
-                        help='Balances wrapping to produce the most consistent line length possible')
+    parser = argparse.ArgumentParser(description=INTRO, formatter_class=RawTextHelpFormatter)
+    parser.add_argument('files', nargs='+', help='One or more source files that you would like converted.')
+    parser.add_argument('-o', '--out-lang', help='Specify the desired output language. Defaults to JavaScript.',
+                        dest='out_lang', type=str, choices=("py", "js"), default="js")
+    parser.add_argument('-e', '--out-ext', help='Specify the desired output files extension (such as py or js). '
+                        'Default is baesd on lang', dest='out_ext', type=str,)
+    parser.add_argument('-i' '--in-ext', help='Specify the extension of the files to parse. Defualt is .jiphy',
+                        default="jiphy", dest="in_ext")
     parser.add_argument('-rc', '--recursive', dest='recursive', action='store_true',
-                        help='Recursively look for Python files of which to sort imports')
-    parser.add_argument('-ot', '--order-by-type', dest='order_by_type',
-                        action='store_true', help='Order imports by type in addition to alphabetically')
-    parser.add_argument('-ac', '--atomic', dest='atomic', action='store_true',
-                        help="Ensures the output doesn't save if the resulting file contains syntax errors.")
-    parser.add_argument('-cs', '--combine-star', dest='combine_star', action='store_true',
-                        help="Ensures that if a star import is present, nothing else is imported from that namespace.")
-    parser.add_argument('-ca', '--combine-as', dest='combine_as_imports', action='store_true',
-                        help="Combines as imports on the same line.")
-    parser.add_argument('-tc', '--trailing-comma', dest='include_trailing_comma', action='store_true',
-                        help='Includes a trailing comma on multi line imports that include parentheses.')
-    parser.add_argument('-v', '--version', action='version', version='jiphy {0}'.format(__version__))
-    parser.add_argument('-vb', '--verbose', action='store_true', dest="verbose",
-                        help='Shows verbose output, such as when files are skipped or when a check is successful.')
-    parser.add_argument('-sp', '--settings-path',  dest="settings_path",
-                        help='Explicitly set the settings path instead of auto determining based on file location.')
-    parser.add_argument('-ff', '--from-first', dest='from_first',
-                        help="Switches the typical ordering preference, showing from imports first then straight ones.")
-    parser.add_argument('-wl', '--wrap-length', dest='wrap_length',
-                        help="Specifies how long lines that are wrapped should be, if not set line_length is used.")
-    parser.add_argument('-fgw', '--force-grid-wrap',  action='store_true', dest="force_grid_wrap",
-                        help='Force from imports to be grid wrapped regardless of line length')
+                        help='Recursively look for files to convert')
+    parser.add_argument('-od', '--out-dir', dest='out_dir', default="",
+                        help="Specify in which directory files should be outputed")
+    parser.add_argument('-d', '--diff', dest='diff', default=False, action='store_true',
+                        help="Produce a diff that would result in running jiphy, "
+                             "without actually performing any changes")
+    
+    arguments = dict((key, value) for (key, value) in itemsview(vars(parser.parse_args())))
+    arguments['out_ext'] = arguments['out_ext'] or arguments['out_lang']
 
-    arguments = dict((key, value) for (key, value) in itemsview(vars(parser.parse_args())) if value)
     file_names = arguments.pop('files', [])
-
     if file_names == ['-']:
-        SortImports(file_contents=sys.stdin.read(), write_to_stdout=True, **arguments)
+        input_code = sys.stdin.read()
+        if arguments['out_lang'] == "py":
+            sys.stdout.write(jiphy.to.python(input_code))
+        else:
+            sys.stdout.write(jiphy.to.javascript(input_code))
     else:
+        if not arguments['diff']:
+            print(INTRO)
         wrong_sorted_files = False
         if arguments.get('recursive', False):
-            file_names = iter_source_code(file_names)
+            file_names = iter_source_code(file_names, arguments['in_ext'])
         for file_name in file_names:
-            try:
-                incorrectly_sorted = SortImports(file_name, **arguments).incorrectly_sorted
-                if arguments.get('check', False) and incorrectly_sorted:
-                    wrong_sorted_files = True
-            except IOError as e:
-                print("WARNING: Unable to parse file {0} due to {1}".format(file_name, e))
-        if wrong_sorted_files:
-            exit(1)
+            with open(file_name) as input_file:
+                input_code = input_file.read()
+                if arguments['out_lang'] == 'py':
+                    output_code = jiphy.to.python(input_code)
+                else:
+                    output_code = jiphy.to.javascript(input_code)
+
+                stripped_code = []
+                for line in output_code.split("\n"):
+                    stripped_code.append(line.rstrip())
+                output_code = '\n'.join(stripped_code)
+
+                file_name_parts = file_name.split('.')
+                output_file_name = "{0}{1}.{2}".format(arguments['out_dir'],
+                                                       ".".join(file_name_parts[:-1]), arguments['out_ext'])
+                if arguments['diff']:
+                    for line in unified_diff(input_code.splitlines(1),
+                                             output_code.splitlines(1),
+                                             fromfile=file_name + ':before',
+                                             tofile=output_file_name + ':after',
+                                             fromfiledate=datetime.fromtimestamp(os.path.getmtime(file_name)),
+                                             tofiledate=datetime.now()):
+                        sys.stdout.write(line)
+                else:
+                    print("   |-> [{2}]: Converting '{0}' -> '{1}' in a Jiphy!".format(file_name, output_file_name,
+                                                                                       arguments['out_lang'].upper()))
+                    with open(output_file_name, 'w') as output_file:
+                        output_file.write(output_code)
+
+        if not arguments['diff']:
+            print("   |")
+            print("   |                 >>> Done! :) <<<")
+            print("")
 
 
 if __name__ == "__main__":
