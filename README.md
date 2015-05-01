@@ -80,12 +80,30 @@ For now, you still have to write var infront of new variables in Jiphy. Jiphy si
 
 Syntax / Contstructs Jiphy Suppports
 ===================
-| Python        | JavaScript    | Supported To JavaScript | Supported To Python |
-| ------------- |:-------------:| -----------------------:|:--------------------|
-| ):
-| "String"      | 'String' | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+| Python        | JavaScript        | Supported To JavaScript | Supported To Python |
+| ------------- |:-----------------:| -----------------------:|:--------------------|
+| def (...):    | function(...) {}  | [x]                     | [x]                 |
+| if ...:       | if (...) {}       | [x]                     | [x]                 |
+| elif ...:     | } else if (...) { | [x]                     | [x]                 |
+| else:         | } else {          | [x]                     | [x]                 |
+| pass          | {}                | [x]                     | [x]                 |
+| print(...)    | console.log(...)  | [x]                     | [x]                 |
+| True          | true              | [x]                     | [x]                 |
+| False         | false             | [x]                     | [x]                 |
+| None          | null              | [x]                     | [x]                 |
+| Or            | ||                | [x]                     | [x]                 |
+| And           | &&                | [x]                     | [x]                 |
+| Unset         | undefined         | [x]                     | [x]                 |
+| not           | !                 | [x]                     | [x]                 |
+| is            | ===               | [x]                     | [x]                 |
+| del           | delete            | [x]                     | [x]                 |
+| \n            | ;\n               | [x]                     | [x]                 |
+| # comment     | // comment        | [x]                     | [x]                 |
+| import x      | var x = require(x)| [x]                     | [ ]                 |
+| import x as _ | var _ = require(x)| [x]                     | [ ]                 |
+| "String"      | 'String'          | [x]                     | [ ]                 |
+| """String"""  | 'Str' + 'ing'     | [x]                     | [ ]                 |
+|
 
 Installing jiphy
 ===================
