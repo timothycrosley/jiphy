@@ -48,7 +48,6 @@ setup(name='jiphy',
       author='Timothy Crosley',
       author_email='timothy.crosley@gmail.com',
       url='https://github.com/timothycrosley/jiphy',
-      download_url='https://github.com/timothycrosley/jiphy/archive/0.0.1.tar.gz',
       license="MIT",
       entry_points={
         'console_scripts': [
