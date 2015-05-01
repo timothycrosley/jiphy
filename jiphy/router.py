@@ -38,9 +38,9 @@ class Router(object):
 
     def add(self, *match):
         def decorator(handler):
-            if isinstance(handler.start_on, (str, unicode)):
+            if isinstance(handler.start_on, str):
                 handler.start_on = (handler.start_on, )
-            if isinstance(handler.end_on, (str, unicode)):
+            if isinstance(handler.end_on, str):
                 handler.end_on = (handler.end_on, )
             for match_on in (match + handler.start_on):
                 self.routes[match_on] = handler
