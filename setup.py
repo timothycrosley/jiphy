@@ -42,7 +42,7 @@ except (IOError, ImportError, OSError, RuntimeError):
    readme = ''
 
 setup(name='jiphy',
-      version='0.0.1',
+      version='1.0.0',
       description='A Python to JavaScript two way converter. Your client side done in a Jiphy.',
       long_description=readme,
       author='Timothy Crosley',
