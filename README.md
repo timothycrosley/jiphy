@@ -4,7 +4,7 @@
 [![PyPI version](https://badge.fury.io/py/jiphy.png)](http://badge.fury.io/py/jiphy)
 [![PyPi downloads](https://pypip.in/d/jiphy/badge.png)](https://crate.io/packages/jiphy/)
 [![Build Status](https://travis-ci.org/timothycrosley/jiphy.png?branch=master)](https://travis-ci.org/timothycrosley/jiphy)
-[![License](https://pypip.in/license/jiphy/badge.png)](https://pypi.python.org/pypi/jiphy/)
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://pypi.python.org/pypi/jiphy/)
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/timothycrosley/jiphy/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Write your client side code in a Jiphy! Jiphy is a two-way Python->JavaScript converter. It's not meant to create
