@@ -81,7 +81,7 @@ For now, you still have to write var infront of new variables in Jiphy. Jiphy si
 Syntax / Contstructs Jiphy Suppports
 ===================
 | Python        | JavaScript        | Supported To JavaScript | Supported To Python |
-| ------------- |:-----------------:| -----------------------:|:--------------------|
+| ------------- |:-----------------:|:-----------------------:|:-------------------:|
 | def (...):    | function(...) {}  | [x]                     | [x]                 |
 | if ...:       | if (...) {}       | [x]                     | [x]                 |
 | elif ...:     | } else if (...) { | [x]                     | [x]                 |
