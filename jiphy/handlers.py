@@ -91,9 +91,9 @@ class Handler(AbstractHandler):
         self.start_index = started_at - len(started_on) + 1
         self.ended_on = ''
         self.ended_at = 0
-        if isinstance(self.end_on, (str, unicode)):
+        if isinstance(self.end_on, str):
             self.end_on = (self.end_on, )
-        if isinstance(self.yield_for, (str, unicode)):
+        if isinstance(self.yield_for, str):
             self.yield_for = (self.yield_for, )
 
         self.start()
