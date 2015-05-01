@@ -7,8 +7,8 @@
 [![License](https://pypip.in/license/jiphy/badge.png)](https://pypi.python.org/pypi/jiphy/)
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/timothycrosley/jiphy/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
-Write your client side code in a Jiphy! Jiphy is a two-way Python->Javascript converter. It's not meant to create
-runnable Python code from comlex JavaScript files, or runnable JavaScript from complex Python projects. Instead,
+Write your client side code in a Jiphy! Jiphy is a two-way Python->JavaScript converter. It's not meant to create
+runnable Python code from complex JavaScript files, or runnable JavaScript from complex Python projects. Instead,
 Jiphy enables Python programmers to more easily write JavaScript code by allowing them to use more familiar syntax,
 and even JavaScript developers to more easily write Python code.
 
@@ -75,7 +75,7 @@ is NOT valid in Jiphy. The lack of a new line makes it impossible to do a 1:1 co
 
 - Jiphy isn't smart enough to know when to create a var
 
-For now, you still have to write var infront of new variables in Jiphy. Jiphy simply does not yet have the smarts to know when it is and when it is not required.
+For now, you still have to write var in front of new variables in Jiphy. Jiphy simply does not yet have the smarts to know when it is and when it is not required.
 
 - Jiphy does not implement stdlib components, classes, etc. It's SYNTAX ONLY.
 
