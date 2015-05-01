@@ -65,7 +65,7 @@ For instance:
 
     print("done")
 
-Is valid as the if statement has a new line after it. Howver:
+Is valid as the if statement has a new line after it. However:
 
     if something is True:
         do_something()
