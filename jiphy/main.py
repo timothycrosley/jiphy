@@ -25,13 +25,14 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import argparse
 import os
 import sys
-from difflib import unified_diff
-from datetime import datetime
 from argparse import RawTextHelpFormatter
-
-from pies.overrides import *
+from datetime import datetime
+from difflib import unified_diff
 
 import jiphy
+
+from .pie_slice import *
+
 
 INTRO = """
  /##########################################################\\

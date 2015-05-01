@@ -19,6 +19,10 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+from .pie_slice import *
+
 
 class Parser(object):
     """Defines the direct interaction between jiphy and the file content"""

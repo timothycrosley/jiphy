@@ -19,8 +19,13 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 """
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from collections import OrderedDict
 from copy import deepcopy
+
+from .pie_slice import *
+
 
 class Router(object):
     """Routes specific text patterns to handlers that define how the content will be transformed

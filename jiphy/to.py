@@ -19,8 +19,11 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 """
-from .parser import Parser
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from .handlers import Handler
+from .parser import Parser
+from .pie_slice import *
 
 
 def ast(code):
@@ -36,4 +39,3 @@ def javascript(code):
 def python(code):
     """Takes the given JavaScript or Python code and returns back Python code"""
     return ast(code).python
-
