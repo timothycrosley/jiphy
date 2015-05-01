@@ -1,4 +1,4 @@
-"""__init__.py.
+"""jiphy/__init__.py.
 
 Write your client side code in a Jiphy! Jiphy is a two-way Python->Javascript converter. It's not meant to create
 runnable Python code from comlex JavaScript files, or runnable JavaScript from comples Python projects. Instead,
@@ -11,10 +11,8 @@ Jiphy's Design Objectives:
 - Always output 1:1 line mappings (a line of Python produces a line of JavaScript) so source maps are not necessary.
 - Be usable for a single developer on a project (Shouldn't require all developers to switch to using Jiphy).
 - Should be easy to write text-editor plugins that expose Jiphy within IDEs for on-the-spot conversion.
-- Quickly run over many files.
-- Configurable output, so code writting on etiher end can easily conform to Project specific coding standards.
 
-Copyright (C) 2013  Timothy Edmund Crosley
+Copyright (C) 2015  Timothy Edmund Crosley
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -31,7 +29,6 @@ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFT
 OTHER DEALINGS IN THE SOFTWARE.
 
 """
-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from . import to
