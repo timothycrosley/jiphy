@@ -1,12 +1,8 @@
-"""pie_slice.py.
+"""pie_slice/overrides.py.
 
-Pie Slice is a single file partial implementation of pies meant for easy distribution and bundling within
-other projects.
-Pie Slice Overrides Python syntax to conform to the Python3 version as much as possible using a '*' import
+Overrides Python syntax to conform to the Python3 version as much as possible using a '*' import
 
-see: github.com/timothycrosley/pie_slice
-
-Copyright (C) 2013  Timothy Edmund Crosley under the MIT License
+Copyright (C) 2013  Timothy Edmund Crosley
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -30,10 +26,11 @@ import functools
 import sys
 from numbers import Integral
 
-from ._utils import unmodified_isinstance, with_metaclass
-from .version_info import PY2, PY3, VERSION
-
 __version__ = "1.0.0"
+
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
+VERSION = sys.version_info
 
 native_dict = dict
 native_round = round
@@ -49,7 +46,72 @@ native_object = object
 
 common = ['native_dict', 'native_round', 'native_filter', 'native_map', 'native_range', 'native_str', 'native_chr',
           'native_input', 'PY2', 'PY3', 'u', 'itemsview', 'valuesview', 'keysview', 'execute', 'integer_types',
-          'native_next', 'native_object', 'with_metaclass']
+          'native_next', 'native_object', 'with_metaclass', 'PY2', 'PY3', 'VERSION']
+
+
+def with_metaclass(meta, *bases):
+    """Enables use of meta classes across Python Versions. taken from jinja2/_compat.py.
+
+    Use it like this::
+
+        class BaseForm(object):
+            pass
+
+        class FormType(type):
+            pass
+
+        class Form(with_metaclass(FormType, BaseForm)):
+            pass
+
+    """
+    class metaclass(meta):
+        __call__ = type.__call__
+        __init__ = type.__init__
+        def __new__(cls, name, this_bases, d):
+            if this_bases is None:
+                return type.__new__(cls, name, (), d)
+            return meta(name, bases, d)
+    return metaclass('temporary_class', None, {})
+
+
+def unmodified_isinstance(*bases):
+    """When called in the form
+
+    MyOverrideClass(unmodified_isinstance(BuiltInClass))
+
+    it allows calls against passed in built in instances to pass even if there not a subclass
+
+    """
+    class UnmodifiedIsInstance(type):
+        if sys.version_info[0] == 2 and sys.version_info[1] <= 6:
+
+            @classmethod
+            def __instancecheck__(cls, instance):
+                if cls.__name__ in (str(base.__name__) for base in bases):
+                    return isinstance(instance, bases)
+
+                subclass = getattr(instance, '__class__', None)
+                subtype = type(instance)
+                instance_type = getattr(abc, '_InstanceType', None)
+                if not instance_type:
+                    class test_object:
+                        pass
+                    instance_type = type(test_object)
+                if subtype is instance_type:
+                    subtype = subclass
+                if subtype is subclass or subclass is None:
+                    return cls.__subclasscheck__(subtype)
+                return (cls.__subclasscheck__(subclass) or cls.__subclasscheck__(subtype))
+        else:
+            @classmethod
+            def __instancecheck__(cls, instance):
+                if cls.__name__ in (str(base.__name__) for base in bases):
+                    return isinstance(instance, bases)
+
+                return type.__instancecheck__(cls, instance)
+
+    return with_metaclass(UnmodifiedIsInstance, *bases)
+
 
 if PY3:
     import urllib
