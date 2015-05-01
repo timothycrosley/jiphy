@@ -21,7 +21,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 """
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from collections import OrderedDict
 from copy import deepcopy
 
 from .pie_slice import *
