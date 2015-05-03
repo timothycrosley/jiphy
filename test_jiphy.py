@@ -42,12 +42,12 @@ def two_way_conversion_test(python_code, javascript_code, expect_python=None, ex
 
 def test_import_conversion():
     """Tests to ensure that converting Python imports to JavaScript imports and vice versa works in a Jiphy."""
-    two_way_conversion_test(("import something\n"
-                             "import underscore as _\n"),
-                            ("var something = require('something');\n"
-                             "var _ = require('underscore');\n"),
-                            ("var something = require('something')\n"
-                             "var _ = require('underscore')\n"))
+    two_way_conversion_test("import something\n"
+                            "import underscore as _\n",
+                            "var something = require('something');\n"
+                            "var _ = require('underscore');\n",
+                            "var something = require('something')\n"
+                            "var _ = require('underscore')\n")
 
 
 def test_noop_function_conversion():
@@ -58,18 +58,18 @@ def test_noop_function_conversion():
 
 def test_simple_indented_function_conversion():
     """Tests to ensure that converting Javascript require statements to Python imports works in a Jiphy."""
-    two_way_conversion_test(("def my_function(test):\n"
-                             "    some_other_function(test)\n"
-                             "\n"),
-                            ("function my_function(test) {\n"
-                             "    some_other_function(test);\n"
-                             "}\n"))
+    two_way_conversion_test("def my_function(test):\n"
+                            "    some_other_function(test)\n"
+                            "\n",
+                            "function my_function(test) {\n"
+                            "    some_other_function(test);\n"
+                            "}\n")
 
 
 def test_print_statement():
     """Tests to ensure print statements have a simple convesion applied to them"""
-    two_way_conversion_test(("print('something')\n"),
-                            ("console.log('something');\n"))
+    two_way_conversion_test("print('something')\n",
+                            "console.log('something');\n")
 
 
 def boolean_test():
@@ -80,12 +80,12 @@ def boolean_test():
 
 def test_condition():
     """Test to ensure basic conditionals get converted in a jiphy"""
-    two_way_conversion_test(("if something is True:\n"
-                             "    do_something()\n"
-                             "\n"),
-                            ("if (something === true) {\n"
-                             "    do_something();\n"
-                             "}\n"))
+    two_way_conversion_test("if something is True:\n"
+                            "    do_something()\n"
+                            "\n",
+                            "if (something === true) {\n"
+                            "    do_something();\n"
+                            "}\n")
 
 
 def test_is():
@@ -96,19 +96,19 @@ def test_is():
 
 def test_not():
     """Test to nesure not statements are correct handled in a jiphy"""
-    two_way_conversion_test(("True is not True\n"
-                             "True = not True\n"),
-                            ("true !== true;\n"
-                             "true = !true;\n"))
+    two_way_conversion_test("True is not True\n"
+                            "True = not True\n",
+                            "true !== true;\n"
+                            "true = !true;\n")
 
 def test_for_loop():
     """Test to ensure that for loops will convert correctly"""
-    two_way_conversion_test(("for var x = 0; x < 10; x++:\n"
-                             "    var y = x\n"
-                             "\n"),
-                            ("for (var x = 0; x < 10; x++) {\n"
-                             "    var y = x;\n"
-                             "}\n"))
+    two_way_conversion_test("for var x = 0; x < 10; x++:\n"
+                            "    var y = x\n"
+                            "\n",
+                            "for (var x = 0; x < 10; x++) {\n"
+                            "    var y = x;\n"
+                            "}\n")
 
 
 def test_variables():
@@ -123,56 +123,56 @@ def test_delete():
 
 def test_elif():
     """Test to ensure elif works as expected"""
-    two_way_conversion_test(("if x == y:\n"
-                             "    print('one')\n"
-                             "elif True:\n"
-                             "    print('two')\n"
-                             "\n"),
-                            ("if (x == y) {\n"
-                             "    console.log('one');\n"
-                             "} else if (true) {\n"
-                             "    console.log('two');\n"
-                             "}\n"))
+    two_way_conversion_test("if x == y:\n"
+                            "    print('one')\n"
+                            "elif True:\n"
+                            "    print('two')\n"
+                            "\n",
+                            "if (x == y) {\n"
+                            "    console.log('one');\n"
+                            "} else if (true) {\n"
+                            "    console.log('two');\n"
+                            "}\n")
 
 
 def test_pass():
     """Test to ensure pass is correctly converted"""
-    two_way_conversion_test(("if x:\n"
-                             "    pass\n"
-                             "\n"
-                             "\n"),
-                            ("if (x) {\n"
-                             "    \n"
-                             "\n"
-                             "}\n"))
+    two_way_conversion_test("if x:\n"
+                            "    pass\n"
+                            "\n"
+                            "\n",
+                            "if (x) {\n"
+                            "    \n"
+                            "\n"
+                            "}\n")
 
 
 def test_comments():
     """Test to ensure comments will work as expected"""
-    two_way_conversion_test(('"""Test comment\n'
-                             '    line two\n'
-                             '"""\n'),
-                            ('/* Test comment\n'
-                             '    line two\n'
-                             ' */\n'))
+    two_way_conversion_test('"""Test comment\n'
+                            '    line two\n'
+                            '"""\n',
+                            '/* Test comment\n'
+                            '    line two\n'
+                            ' */\n')
     two_way_conversion_test("# comment\n",
                             "// comment\n")
-    two_way_conversion_test(('""""\n'
-                             '    Test Comment\n'
-                             '"""\n'),
-                            ('/**\n'
-                             '    Test Comment\n'
-                             ' */\n'))
+    two_way_conversion_test('""""\n'
+                            '    Test Comment\n'
+                            '"""\n',
+                            '/**\n'
+                            '    Test Comment\n'
+                            ' */\n')
 
 
 def test_multi_line_string():
     """Test to ensure multi line strings work as expected"""
-    two_way_conversion_test(("print('''line one\n"
-                             "         line two''')\n"),
-                            ("console.log('line one\\n' +\n"
-                             "'         line two');\n"),
-                            ("print('line one\\n' +\n"
-                             "'         line two')\n"))
+    two_way_conversion_test("print('''line one\n"
+                            "         line two''')\n",
+                            "console.log('line one\\n' +\n"
+                            "'         line two');\n",
+                            "print('line one\\n' +\n"
+                            "'         line two')\n")
 
 
 def test_assigned_function():
@@ -203,3 +203,37 @@ def test_magic_function():
                             "  print(argument1)\n"
                             "\n")
 
+
+def test_decorator():
+    """Test to ensure decorators get converted in the expected way"""
+    two_way_conversion_test("@decorate\n"
+                            "def my_action(arguments):\n"
+                            "   do_something()\n"
+                            "\n",
+                            "my_action = decorate(my_action);\n"
+                            "function my_action(arguments) {\n"
+                            "   do_something();\n"
+                            "}\n",
+                            "my_action = decorate(my_action)\n"
+                            "def my_action(arguments):\n"
+                            "   do_something()\n"
+                            "\n",
+                            )
+
+
+def test_str():
+    """Test to ensure strings get converted in the expected way"""
+    two_way_conversion_test("x = str(1)\n",
+                            "x = String(1);\n")
+
+
+def test_int():
+    """Test to ensure ints get converted in the expected way"""
+    two_way_conversion_test("y = int('1')\n",
+                            "y = Number('1');\n")
+
+
+def test_bool():
+    """Test to ensure booleans get converted in the expected way"""
+    two_way_conversion_test("z = bool(1)\n",
+                            "z = Boolean(1);\n")
