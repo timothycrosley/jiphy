@@ -32,6 +32,7 @@ from difflib import unified_diff
 import jiphy
 
 from .pie_slice import *
+from . import __version__
 
 
 INTRO = """
@@ -50,7 +51,7 @@ INTRO = """
  . .......$$D\$$$$/M$~. ..=777777777?.... .. ........ .......
  ...........,7$$$$$7777777777777..................... .......
  ..............777777777777777......... ............... .....
- ...............77777777777................VERSION 1.0.......
+ ...............77777777777................VERSION {0}.....
  ........ ...................................................
  ............................................................
  \##########################################################/
@@ -58,7 +59,7 @@ INTRO = """
  Copyright (C) 2015 Timothy Edmund Crosley
  Under the MIT License
 
-"""
+""".format(__version__)
 
 
 def iter_source_code(paths, in_ext="py"):
@@ -91,6 +92,8 @@ def main():
                              "without actually performing any changes")
     parser.add_argument('-c', '--conform', dest='conform', default=False, action='store_true',
                         help="Conform all code within passed in files to the format implied by its extension")
+    parser.add_argument('-v', '--version', dest='version', action='version',
+                        version="Jiphy v.{0}".format(__version__))
     
     arguments = dict((key, value) for (key, value) in itemsview(vars(parser.parse_args())))
 
