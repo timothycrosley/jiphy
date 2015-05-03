@@ -53,6 +53,21 @@ Get:
 in a jiphy.
 
 
+Why jiphy?
+======================
+
+jiphy (pronounced: jiffy) simply stands for JavaScript In, Python Out.
+
+Jiphy is very different from other attempts at Python -> JavaScript conversion for the following reasons:
+ -  Converts in both directions (JavaScript -> Python, Python -> JavaScript).
+ -  Allows intermixing of code. You can add a Python function to a JavaScript file and then convert it all to JavaScript.
+ -  Converts lines 1:1, so you always know which source line causes which output line. No source mapping needed.
+ -  Doesn't require any extra JavaScript files to be loaded.
+ -  Can be used by a single developer without team buy-in.
+
+Jiphy only supports syntax, but with ES6 around the corner should one day support Classes, default arguments, etc.
+
+
 Important things to know when writing Python for conversion to JavaScript
 ===================
 
@@ -82,30 +97,35 @@ For now, you still have to write var in front of new variables in Jiphy. Jiphy s
 
 Syntax / Contstructs Jiphy Suppports
 ===================
-| Python        | JavaScript        | Supported To JavaScript | Supported To Python |
-| ------------- |:-----------------:|:-----------------------:|:-------------------:|
-| def (...):    | function(...) {}  |  ✓                      |  ✓                  |
-| if ...:       | if (...) {}       |  ✓                      |  ✓                  |
-| elif ...:     | } else if (...) { |  ✓                      |  ✓                  |
-| else:         | } else {          |  ✓                      |  ✓                  |
-| pass          | {}                |  ✓                      |  ✓                  |
-| print(...)    | console.log(...)  |  ✓                      |  ✓                  |
-| True          | true              |  ✓                      |  ✓                  |
-| False         | false             |  ✓                      |  ✓                  |
-| None          | null              |  ✓                      |  ✓                  |
-| Or            | &#124;&#124;                | ✓                        |  ✓                  |
-| And           | &&                |  ✓                      |  ✓                  |
-| Unset         | undefined         |  ✓                      |  ✓                  |
-| not           | !                 |  ✓                      |  ✓                  |
-| is            | ===               |  ✓                      |  ✓                  |
-| del           | delete            |  ✓                      |  ✓                  |
-| \n            | ;\n               |  ✓                      |  ✓                  |
-| # comment     | // comment        |  ✓                      |  ✓                  |
-| import x      | var x = require(x)|  ✓                      |                     |
-| import x as _ | var _ = require(x)|  ✓                      |                     |
-| "String"      | 'String'          |  ✓                      |                     |
-| """String"""  | 'Str' + 'ing'     |  ✓                      |                     |
-|
+| Python                      | JavaScript        | Supported To JavaScript | Supported To Python |
+|:----------------------------|:------------------|:-----------------------:|:-------------------:|
+| def (...):                  | function(...) {}  |  ✓                      |  ✓                  |
+| if ...:                     | if (...) {}       |  ✓                      |  ✓                  |
+| elif ...:                   | } else if (...) { |  ✓                      |  ✓                  |
+| else:                       | } else {          |  ✓                      |  ✓                  |
+| pass                        | {}                |  ✓                      |  ✓                  |
+| print(...)                  | console.log(...)  |  ✓                      |  ✓                  |
+| True                        | true              |  ✓                      |  ✓                  |
+| False                       | false             |  ✓                      |  ✓                  |
+| None                        | null              |  ✓                      |  ✓                  |
+| Or                          | &#124;&#124;                | ✓                        |  ✓                  |
+| And                         | &&                |  ✓                      |  ✓                  |
+| Unset                       | undefined         |  ✓                      |  ✓                  |
+| not                         | !                 |  ✓                      |  ✓                  |
+| is                          | ===               |  ✓                      |  ✓                  |
+| del                         | delete            |  ✓                      |  ✓                  |
+| \n                          | ;\n               |  ✓                      |  ✓                  |
+| # comment                   | // comment        |  ✓                      |  ✓                  |
+| str(...)                    | String(...)       |  ✓                      |  ✓                  |
+| bool(...)                   | Boolean(...)      |  ✓                      |  ✓                  |
+| int(...)                    | Number(...)       |  ✓                      |  ✓                  |
+| import pdb; pdb.set_trace() | debugger;         |  ✓                      |  ✓                  |
+| import x                    | var x = require(x)|  ✓                      |                     |
+| import x as _               | var _ = require(x)|  ✓                      |                     |
+| "String"                    | 'String'          |  ✓                      |                     |
+| """String"""                | 'Str' + 'ing'     |  ✓                      |                     |
+| @decorator                  | f = decorator(f)  |  ✓                      |                     |
+
 
 Installing jiphy
 ===================
@@ -118,11 +138,16 @@ or if you prefer
 
     easy_install jiphy
 
+
 Using jiphy
 ===================
 **from the command line**:
 
     jiphy mypythonfile.py mypythonfile2.py
+
+ or to conform all code to the specified file format
+
+    jiphy mypythonfile.js mypythonfile2.js --conform
 
 or recursively:
 
@@ -131,6 +156,10 @@ or recursively:
  *which is equivalent to*
 
     jiphy **/*.py
+
+or recursively conform:
+
+    jiphy -rc --conform .
 
 or to see the proposed changes without applying them
 
@@ -142,12 +171,6 @@ or to see the proposed changes without applying them
 
     jiphy.to.javascript(python_code)
     jiphy.to.python(javascript_code)
-
-
-Why jiphy?
-======================
-
-jiphy (pronounced: jiffy) simply stands for JavaScript In, Python Out.
 
 --------------------------------------------
 

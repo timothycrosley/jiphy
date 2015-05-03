@@ -32,10 +32,12 @@ class Parser(object):
         self.code = code
         self.output = []
 
-    def text_till(self, strings):
+    def text_till(self, strings, keep_index=False):
         """Returns all text till it encounters the given string (or one of the given strings)"""
         if isinstance(strings, str):
             strings = [strings]
+
+        original_index = self.index
 
         text = ""
         matched_string = ""
@@ -57,6 +59,10 @@ class Parser(object):
             text += self.pop()
 
         self += 1
+
+        if keep_index:
+            self.index = original_index
+
         return (text, matched_string)
 
     def __getitem__(self, index):

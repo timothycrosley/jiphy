@@ -77,7 +77,7 @@ def main():
     parser = argparse.ArgumentParser(description=INTRO, formatter_class=RawTextHelpFormatter)
     parser.add_argument('files', nargs='+', help='One or more source files that you would like converted.')
     parser.add_argument('-o', '--out-lang', help='Specify the desired output language. Defaults to JavaScript.',
-                        dest='out_lang', type=str, choices=("py", "js"), default="js")
+                        dest='out_lang', type=str, choices=("py", "js"), default="")
     parser.add_argument('-e', '--out-ext', help='Specify the desired output files extension (such as py or js). '
                         'Default is baesd on lang', dest='out_ext', type=str,)
     parser.add_argument('-i' '--in-ext', help='Specify the extension of the files to parse. Defualt is .jiphy',
@@ -89,9 +89,10 @@ def main():
     parser.add_argument('-d', '--diff', dest='diff', default=False, action='store_true',
                         help="Produce a diff that would result in running jiphy, "
                              "without actually performing any changes")
+    parser.add_argument('-c', '--conform', dest='conform', default=False, action='store_true',
+                        help="Conform all code within passed in files to the format implied by its extension")
     
     arguments = dict((key, value) for (key, value) in itemsview(vars(parser.parse_args())))
-    arguments['out_ext'] = arguments['out_ext'] or arguments['out_lang']
 
     file_names = arguments.pop('files', [])
     if file_names == ['-']:
@@ -109,7 +110,19 @@ def main():
         for file_name in file_names:
             with open(file_name) as input_file:
                 input_code = input_file.read()
-                if arguments['out_lang'] == 'py':
+                out_lang = arguments['out_lang']
+                if not out_lang:
+                    out_lang = file_name.split(".")[-1].lower()
+                    if out_lang in ("py", "js"):
+                        if not arguments['conform']:
+                            if out_lang == "py":
+                                out_lang = "js"
+                            else:
+                                out_lang = "py"
+                    else:
+                        out_lang = "js"
+
+                if out_lang == 'py':
                     output_code = jiphy.to.python(input_code)
                 else:
                     output_code = jiphy.to.javascript(input_code)
@@ -121,7 +134,7 @@ def main():
 
                 file_name_parts = file_name.split('.')
                 output_file_name = "{0}{1}.{2}".format(arguments['out_dir'],
-                                                       ".".join(file_name_parts[:-1]), arguments['out_ext'])
+                                                       ".".join(file_name_parts[:-1]), arguments['out_ext'] or out_lang)
                 if arguments['diff']:
                     for line in unified_diff(input_code.splitlines(1),
                                              output_code.splitlines(1),
@@ -131,8 +144,8 @@ def main():
                                              tofiledate=datetime.now()):
                         sys.stdout.write(line)
                 else:
-                    print("   |-> [{2}]: Converting '{0}' -> '{1}' in a Jiphy!".format(file_name, output_file_name,
-                                                                                       arguments['out_lang'].upper()))
+                    print("   |-> [{2}]: {3} '{0}' -> '{1}' in a Jiphy!".format(file_name, output_file_name,
+                          out_lang.upper(), arguments['conform'] and "Conforming" or "Converting"))
                     with open(output_file_name, 'w') as output_file:
                         output_file.write(output_code)
 
