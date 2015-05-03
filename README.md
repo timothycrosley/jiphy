@@ -53,6 +53,21 @@ Get:
 in a jiphy.
 
 
+Why jiphy?
+======================
+
+jiphy (pronounced: jiffy) simply stands for JavaScript In, Python Out.
+
+Jiphy is very different from other attempts at Python -> JavaScript conversion for the following reasons:
+ -  Converts in both directions (JavaScript -> Python, Python -> JavaScript).
+ -  Allows intermixing of code. You can add a Python function to a JavaScript file and then convert it all to JavaScript.
+ -  Converts lines 1:1, so you always know which source line causes which output line. No source mapping needed.
+ -  Doesn't require any extra JavaScript files to be loaded.
+ -  Can be used by a single developer without team buy-in.
+
+Jiphy only supports syntax, but with ES6 around the corner should one day support Classes, default arguments, etc.
+
+
 Important things to know when writing Python for conversion to JavaScript
 ===================
 
@@ -111,6 +126,7 @@ Syntax / Contstructs Jiphy Suppports
 | """String"""                | 'Str' + 'ing'     |  ✓                      |                     |
 | @decorator                  | f = decorator(f)  |  ✓                      |                     |
 
+
 Installing jiphy
 ===================
 
@@ -121,6 +137,7 @@ Installing jiphy is as simple as:
 or if you prefer
 
     easy_install jiphy
+
 
 Using jiphy
 ===================
@@ -154,13 +171,6 @@ or to see the proposed changes without applying them
 
     jiphy.to.javascript(python_code)
     jiphy.to.python(javascript_code)
-
-
-
-Why jiphy?
-======================
-
-jiphy (pronounced: jiffy) simply stands for JavaScript In, Python Out.
 
 --------------------------------------------
 
