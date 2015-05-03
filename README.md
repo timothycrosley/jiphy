@@ -83,7 +83,7 @@ For now, you still have to write var in front of new variables in Jiphy. Jiphy s
 Syntax / Contstructs Jiphy Suppports
 ===================
 | Python                      | JavaScript        | Supported To JavaScript | Supported To Python |
-| -------------               |:-----------------:|:-----------------------:|:-------------------:|
+|:----------------------------|:------------------|:-----------------------:|:-------------------:|
 | def (...):                  | function(...) {}  |  ✓                      |  ✓                  |
 | if ...:                     | if (...) {}       |  ✓                      |  ✓                  |
 | elif ...:                   | } else if (...) { |  ✓                      |  ✓                  |
