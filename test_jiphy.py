@@ -237,3 +237,9 @@ def test_bool():
     """Test to ensure booleans get converted in the expected way"""
     two_way_conversion_test("z = bool(1)\n",
                             "z = Boolean(1);\n")
+
+
+def test_breakpoint():
+    """Test to ensure breakpoints get converted in the expected way"""
+    two_way_conversion_test("import pdb; pdb.set_trace()\n",
+                            "debugger;\n")
