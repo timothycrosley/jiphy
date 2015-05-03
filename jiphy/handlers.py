@@ -287,6 +287,16 @@ class SingleLineComment(Handler):
         return '# {0}\n'.format(self.python_content)
 
 
+@routes.add('import pdb; pdb.set_trace()\n', 'import pdb;pdb.set_trace()\n', 'debugger;\n')
+class BreakPoint(Handler):
+
+    def _javascript(self):
+        return "debugger;\n"
+
+    def _python(self):
+        return "import pdb; pdb.set_trace()\n"
+
+
 @routes.add("import ")
 class PythonImport(Handler):
     end_on = ("\n", " #", " //")
