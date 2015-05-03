@@ -128,6 +128,10 @@ Using jiphy
 
     jiphy mypythonfile.py mypythonfile2.py
 
+ or to conform all code to the specified file format
+
+    jiphy mypythonfile.js mypythonfile2.js --conform
+
 or recursively:
 
     jiphy -rc .
@@ -135,6 +139,10 @@ or recursively:
  *which is equivalent to*
 
     jiphy **/*.py
+
+or recursively conform:
+
+    jiphy -rc --conform .
 
 or to see the proposed changes without applying them
 
@@ -146,6 +154,7 @@ or to see the proposed changes without applying them
 
     jiphy.to.javascript(python_code)
     jiphy.to.python(javascript_code)
+
 
 
 Why jiphy?
