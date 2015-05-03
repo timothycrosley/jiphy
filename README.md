@@ -82,33 +82,34 @@ For now, you still have to write var in front of new variables in Jiphy. Jiphy s
 
 Syntax / Contstructs Jiphy Suppports
 ===================
-| Python        | JavaScript        | Supported To JavaScript | Supported To Python |
-| ------------- |:-----------------:|:-----------------------:|:-------------------:|
-| def (...):    | function(...) {}  |  ✓                      |  ✓                  |
-| if ...:       | if (...) {}       |  ✓                      |  ✓                  |
-| elif ...:     | } else if (...) { |  ✓                      |  ✓                  |
-| else:         | } else {          |  ✓                      |  ✓                  |
-| pass          | {}                |  ✓                      |  ✓                  |
-| print(...)    | console.log(...)  |  ✓                      |  ✓                  |
-| True          | true              |  ✓                      |  ✓                  |
-| False         | false             |  ✓                      |  ✓                  |
-| None          | null              |  ✓                      |  ✓                  |
-| Or            | &#124;&#124;                | ✓                        |  ✓                  |
-| And           | &&                |  ✓                      |  ✓                  |
-| Unset         | undefined         |  ✓                      |  ✓                  |
-| not           | !                 |  ✓                      |  ✓                  |
-| is            | ===               |  ✓                      |  ✓                  |
-| del           | delete            |  ✓                      |  ✓                  |
-| \n            | ;\n               |  ✓                      |  ✓                  |
-| # comment     | // comment        |  ✓                      |  ✓                  |
-| str(...)      | String(...)       |  ✓                      |  ✓                  |
-| bool(...)     | Boolean(...)      |  ✓                      |  ✓                  |
-| int(...)      | Number(...)       |  ✓                      |  ✓                  |
-| import x      | var x = require(x)|  ✓                      |                     |
-| import x as _ | var _ = require(x)|  ✓                      |                     |
-| "String"      | 'String'          |  ✓                      |                     |
-| """String"""  | 'Str' + 'ing'     |  ✓                      |                     |
-| @decorator    | f = decorator(f)  |  ✓                      |                     |
+| Python                      | JavaScript        | Supported To JavaScript | Supported To Python |
+| -------------               |:-----------------:|:-----------------------:|:-------------------:|
+| def (...):                  | function(...) {}  |  ✓                      |  ✓                  |
+| if ...:                     | if (...) {}       |  ✓                      |  ✓                  |
+| elif ...:                   | } else if (...) { |  ✓                      |  ✓                  |
+| else:                       | } else {          |  ✓                      |  ✓                  |
+| pass                        | {}                |  ✓                      |  ✓                  |
+| print(...)                  | console.log(...)  |  ✓                      |  ✓                  |
+| True                        | true              |  ✓                      |  ✓                  |
+| False                       | false             |  ✓                      |  ✓                  |
+| None                        | null              |  ✓                      |  ✓                  |
+| Or                          | &#124;&#124;                | ✓                        |  ✓                  |
+| And                         | &&                |  ✓                      |  ✓                  |
+| Unset                       | undefined         |  ✓                      |  ✓                  |
+| not                         | !                 |  ✓                      |  ✓                  |
+| is                          | ===               |  ✓                      |  ✓                  |
+| del                         | delete            |  ✓                      |  ✓                  |
+| \n                          | ;\n               |  ✓                      |  ✓                  |
+| # comment                   | // comment        |  ✓                      |  ✓                  |
+| str(...)                    | String(...)       |  ✓                      |  ✓                  |
+| bool(...)                   | Boolean(...)      |  ✓                      |  ✓                  |
+| int(...)                    | Number(...)       |  ✓                      |  ✓                  |
+| import pdb; pdb.set_trace() | debugger;         |  ✓                      |  ✓                  |
+| import x                    | var x = require(x)|  ✓                      |                     |
+| import x as _               | var _ = require(x)|  ✓                      |                     |
+| "String"                    | 'String'          |  ✓                      |                     |
+| """String"""                | 'Str' + 'ing'     |  ✓                      |                     |
+| @decorator                  | f = decorator(f)  |  ✓                      |                     |
 
 Installing jiphy
 ===================
