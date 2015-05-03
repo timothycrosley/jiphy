@@ -101,11 +101,14 @@ Syntax / Contstructs Jiphy Suppports
 | del           | delete            |  ✓                      |  ✓                  |
 | \n            | ;\n               |  ✓                      |  ✓                  |
 | # comment     | // comment        |  ✓                      |  ✓                  |
+| str(...)      | String(...)       |  ✓                      |  ✓                  |
+| bool(...)     | Boolean(...)      |  ✓                      |  ✓                  |
+| int(...)      | Number(...)       |  ✓                      |  ✓                  |
 | import x      | var x = require(x)|  ✓                      |                     |
 | import x as _ | var _ = require(x)|  ✓                      |                     |
 | "String"      | 'String'          |  ✓                      |                     |
 | """String"""  | 'Str' + 'ing'     |  ✓                      |                     |
-|
+| @decorator    | f = decorator(f)  |  ✓                      |                     |
 
 Installing jiphy
 ===================

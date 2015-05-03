@@ -701,7 +701,63 @@ class EndOfLine(Handler):
         return ';\n'
 
 
-IfStatement.accept_children = routes.excluding('(')
-Function.accept_children = IfStatement.accept_children
-ElifStatement.accept_children = IfStatement.accept_children
-ExportFunction.accept_children = IfStatement.accept_children
+@routes.add('^String', '^str', '(String', '(str')
+class String(Handler):
+
+    def handle(self):
+        if self.started_on.startswith("("):
+            self.leading_whitespace = "("
+
+    def _python(self):
+        return self.leading_whitespace + 'str'
+
+    def _javascript(self):
+        return self.leading_whitespace + 'String'
+
+
+@routes.add('^Boolean', '^bool', '(Boolean', '(bool')
+class Boolean(Handler):
+
+    def handle(self):
+        if self.started_on.startswith("("):
+            self.leading_whitespace = "("
+
+    def _python(self):
+        return self.leading_whitespace + 'bool'
+
+    def _javascript(self):
+        return self.leading_whitespace + 'Boolean'
+
+
+@routes.add('^Number', '^int', '(Number', '(int')
+class Number(Handler):
+
+    def handle(self):
+        if self.started_on.startswith("("):
+            self.leading_whitespace = "("
+
+    def _python(self):
+        return self.leading_whitespace + 'int'
+
+    def _javascript(self):
+        return self.leading_whitespace + 'Number'
+
+
+@routes.add('@')
+class Decorator(Handler):
+    end_on = ('\n', ')\n')
+
+    def handle(self):
+        (parts, _) = self.parser.text_till(("("), keep_index=True)
+        self.function_name = parts.split()[-1]
+
+    def _javascript(self):
+        return "{1} = {0}({1});\n".format(Handler._javascript(self)[1:-1], self.function_name)
+
+
+no_nested_parens = routes.excluding('(')
+IfStatement.accept_children = no_nested_parens
+Function.accept_children = no_nested_parens
+ElifStatement.accept_children = no_nested_parens
+ExportFunction.accept_children = no_nested_parens
+Decorator.accept_children = no_nested_parens
