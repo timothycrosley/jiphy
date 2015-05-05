@@ -547,7 +547,10 @@ class PythonBlock(Block):
         if(not self.javascript_content.replace("\n", "").strip().endswith(";") and not
            isinstance(last_child, (PythonNoop, EndOfLine, SingleLineComment)) and not self.ahead() in
            (".", "(", ";") and not extra == ", "):
-            content += ";"
+            if content[-1] == "\n":
+                content = content[:-1] + ";" + "\n"
+            else:
+                content += ";"
 
         if extra:
             content += self.indent + "}" + extra

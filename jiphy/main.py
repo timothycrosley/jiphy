@@ -150,7 +150,7 @@ def main():
                     print("   |-> [{2}]: {3} '{0}' -> '{1}' in a Jiphy!".format(file_name, output_file_name,
                           out_lang.upper(), arguments['conform'] and "Conforming" or "Converting"))
                     with open(output_file_name, 'w') as output_file:
-                        output_file.write(output_code)
+                        output_file.write(output_code.rstrip("\n") + "\n")
 
         if not arguments['diff']:
             print("   |")
