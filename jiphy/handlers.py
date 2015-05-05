@@ -279,12 +279,13 @@ class PythonBasicString(Handler):
 class SingleLineComment(Handler):
     accept_children = Router()
     end_on = "\n"
+    back_track = 1
 
     def _javascript(self):
-        return '// {0}\n'.format(self.javascript_content)
+        return '// {0}'.format(self.javascript_content)
 
     def _python(self):
-        return '# {0}\n'.format(self.python_content)
+        return '# {0}'.format(self.python_content)
 
 
 @routes.add('import pdb; pdb.set_trace()\n', 'import pdb;pdb.set_trace()\n', 'debugger;\n')
@@ -544,8 +545,8 @@ class PythonBlock(Block):
                 content += "\n\n"
             return content
         if(not self.javascript_content.replace("\n", "").strip().endswith(";") and not
-           isinstance(last_child, PythonNoop) and not self.ahead() in (".", "(", ";") and not
-           extra == ", "):
+           isinstance(last_child, (PythonNoop, EndOfLine, SingleLineComment)) and not self.ahead() in
+           (".", "(", ";") and not extra == ", "):
             content += ";"
 
         if extra:
@@ -700,7 +701,7 @@ class EndOfLine(Handler):
     def _javascript(self):
         if self.behind() in ('\n', ' ', '\t', '/', ',', '{', '+'):
             return "\n"
-        if(isinstance(self.prev, (EndOfStatement, Block)) or isinstance(self.parent, Dictionary) or
+        if(isinstance(self.prev, (EndOfStatement, Block, SingleLineComment)) or isinstance(self.parent, Dictionary) or
            isinstance(self.prev, MultiLineComment) or
            self.next_content() in (';', '.', '(')):
             return "\n"
