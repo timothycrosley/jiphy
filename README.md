@@ -26,29 +26,33 @@ Jiphy's Design Objectives:
 
 Write:
 
-    import underscore as _
+```python
+import underscore as _
 
-    def my_function(argument1, argument2):
-        if argument1:
-            del argument2
-        elif argument2:
-            print(argument2)
+def my_function(argument1, argument2):
+    if argument1:
+        del argument2
+    elif argument2:
+        print(argument2)
 
-        if somevar is someothervar And x is not b: pass
+    if somevar is someothervar And x is not b: pass
+```
 
 
 Get:
 
-    var _ = require('_');
+```javascript
+var _ = require('_');
 
-    function my_function(argument1, argument2) {
-        if (argument1) {
-            delete argument2;
-        } else if (argument2) {
-            console.log(argument2);
-        }
-        if (somevar === someothervar && x !== b) {}
+function my_function(argument1, argument2) {
+    if (argument1) {
+        delete argument2;
+    } else if (argument2) {
+        console.log(argument2);
     }
+    if (somevar === someothervar && x !== b) {}
+}
+```
 
 in a jiphy.
 

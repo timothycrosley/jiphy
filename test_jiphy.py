@@ -243,3 +243,15 @@ def test_breakpoint():
     """Test to ensure breakpoints get converted in the expected way"""
     two_way_conversion_test("import pdb; pdb.set_trace()\n",
                             "debugger;\n")
+
+
+def test_last_construct_single_line_comment():
+    """Test to ensure correct behaviour when the last construct is a single line comment"""
+    two_way_conversion_test("def my_utility(argument):\n"
+                            "   do_something()\n"
+                            "   # comment\n"
+                            "\n",
+                            "function my_utility(argument) {\n"
+                            "   do_something();\n"
+                            "   // comment\n"
+                            "}\n")
