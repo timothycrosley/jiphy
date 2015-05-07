@@ -16,7 +16,7 @@ Code Contributors
 
 Documenters
 ===================
-- TBD
+- Corey Farwell (@frewsxcv)
 
 --------------------------------------------
 
