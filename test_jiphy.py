@@ -255,3 +255,26 @@ def test_last_construct_single_line_comment():
                             "   do_something();\n"
                             "   // comment\n"
                             "}\n")
+
+def test_except_conversion():
+    """Test to ensure excepts / catches get converted successfully"""
+    two_way_conversion_test("try:\n"
+                            "   do_something()\n"
+                            "except Exception as e:\n"
+                            "   do_something_else(e)\n"
+                            "\n",
+                            "try {\n"
+                            "   do_something();\n"
+                            "} catch (e) {\n"
+                            "   do_something_else(e);\n"
+                            "}\n")
+    two_way_conversion_test("try:\n"
+                            "   do_something()\n"
+                            "except:\n"
+                            "   do_something_else()\n"
+                            "\n",
+                            "try {\n"
+                            "   do_something();\n"
+                            "} catch () {\n"
+                            "   do_something_else();\n"
+                            "}\n")
