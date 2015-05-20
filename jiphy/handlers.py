@@ -794,6 +794,12 @@ class Decorator(Handler):
         return "{1} = {0}({1});\n".format(Handler._javascript(self)[1:-1], self.function_name)
 
 
+@routes.add('.append(', '.push(')
+class Append(Handler):
+    javascript = '.push('
+    python = '.append('
+
+
 no_nested_parens = routes.excluding('(')
 IfStatement.accept_children = no_nested_parens
 Function.accept_children = no_nested_parens
