@@ -445,6 +445,12 @@ class ForStatement(Handler):
     python = 'for '
 
 
+@routes.add('while (', 'while ')
+class ForStatement(Handler):
+    javascript = 'while ('
+    python = 'while '
+
+
 @routes.add('elif ', '^} else if (')
 class ElifStatement(Handler):
     end_on = (":\n", ") {\n")
