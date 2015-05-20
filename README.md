@@ -127,6 +127,7 @@ Syntax / Contstructs Jiphy Suppports
 | try:                        | try {             |  ✓                      |  ✓                  |
 | except                      | catch             |  ✓                      |  ✓                  |
 | except Exception as e       | catch(e)          |  ✓                      |  ✓                  |
+| .append(...)                | .push(...)        |  ✓                      |  ✓                  |
 | import x                    | var x = require(x)|  ✓                      |                     |
 | import x as _               | var _ = require(x)|  ✓                      |                     |
 | "String"                    | 'String'          |  ✓                      |                     |
