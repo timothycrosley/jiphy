@@ -295,3 +295,9 @@ def test_append_conversion():
     """Tests to ensure append/push get converted in desired mannor"""
     two_way_conversion_test("[].append('item')\n",
                             "[].push('item');\n")
+
+
+def test_raise_conversion():
+    """Tests to ensure append/push get converted in desired mannor"""
+    two_way_conversion_test("raise 'error'\n",
+                            "throw 'error';\n")

@@ -744,6 +744,12 @@ class Append(Handler):
     python = '.append('
 
 
+@routes.add('raise ', 'throw ')
+class Append(Handler):
+    javascript = 'throw '
+    python = 'raise '
+
+
 no_nested_parens = routes.excluding('(')
 IfStatement.accept_children = no_nested_parens
 Function.accept_children = no_nested_parens
