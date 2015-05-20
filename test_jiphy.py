@@ -256,6 +256,7 @@ def test_last_construct_single_line_comment():
                             "   // comment\n"
                             "}\n")
 
+
 def test_except_conversion():
     """Test to ensure excepts / catches get converted successfully"""
     two_way_conversion_test("try:\n"
@@ -278,3 +279,9 @@ def test_except_conversion():
                             "} catch () {\n"
                             "   do_something_else();\n"
                             "}\n")
+
+
+def test_append_conversion():
+    """Tests to ensure append/push get converted in desired mannor"""
+    two_way_conversion_test("[].append('item')\n",
+                            "[].push('item');\n")
