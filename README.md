@@ -124,6 +124,9 @@ Syntax / Contstructs Jiphy Suppports
 | bool(...)                   | Boolean(...)      |  ✓                      |  ✓                  |
 | int(...)                    | Number(...)       |  ✓                      |  ✓                  |
 | import pdb; pdb.set_trace() | debugger;         |  ✓                      |  ✓                  |
+| try:                        | try {             |  ✓                      |  ✓                  |
+| except                      | catch             |  ✓                      |  ✓                  |
+| except Exception as e       | catch(e)          |  ✓                      |  ✓                  |
 | import x                    | var x = require(x)|  ✓                      |                     |
 | import x as _               | var _ = require(x)|  ✓                      |                     |
 | "String"                    | 'String'          |  ✓                      |                     |
