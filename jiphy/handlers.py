@@ -488,6 +488,19 @@ class ElifStatement(Handler):
         return self.leading_whitespace + '} else if (' + self.javascript_content + ") {\n"
 
 
+@routes.add('except Exception as ', 'except', '^} catch (')
+class ExceptStatement(Handler):
+    end_on = (":\n", ") {\n")
+
+    def _python(self):
+        if self.python_content:
+            return self.leading_whitespace + 'except Exception as ' + self.python_content + ":\n"
+        return self.leading_whitespace + 'except' + self.python_content + ":\n"
+
+    def _javascript(self):
+        return self.leading_whitespace + '} catch (' + self.javascript_content + ") {\n"
+
+
 @routes.add('else:\n', '^} else {\n')
 class ElseStatement(Handler):
 
@@ -513,6 +526,7 @@ class Block(Handler):
 @routes.add('):\n', ':\n')
 class PythonBlock(Block):
     end_on = ('\n\n', ')', '    , ')
+    javascript_start_with = ") {\n"
 
     @property
     def back_track(self):
@@ -520,7 +534,7 @@ class PythonBlock(Block):
             return 1
 
     def _javascript(self):
-        content = ") {\n" + self.javascript_content.rstrip(" ").rstrip("\t")
+        content = self.javascript_start_with + self.javascript_content.rstrip(" ").rstrip("\t")
 
         extra = ""
         if self.ended_on == self.end_on[1]:
@@ -566,19 +580,30 @@ class PythonBlock(Block):
         return content
 
 
-@routes.add(') {\n')
+@routes.add('try:\n')
+class PythonTry(PythonBlock):
+    javascript_start_with = "try {\n"
+
+
+@routes.add(') {\n', 'try {\n')
 class JavascriptBlock(Block):
     end_on = ("};", "}")
+    python_start_with = ":\n"
 
     def _python(self):
         if not self.python_content.strip():
-            to_return = ":\n{0}pass\n\n".format(self.indent + "    ")
+            to_return = "{0}{1}pass\n\n".format(self.python_start_with, self.indent + "    ")
         else:
-            to_return = ":\n{0}".format(self.python_content)
+            to_return = "{0}{1}".format(self.python_start_with, self.python_content)
         if isinstance(self.prev, Function):
             to_return = ")" + to_return
 
         return to_return
+
+
+@routes.add('try {\n')
+class JavascriptTry(JavascriptBlock):
+    python_start_with = "try:\n"
 
 
 @routes.add('(')
