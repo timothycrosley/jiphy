@@ -79,11 +79,21 @@ def boolean_test():
 
 
 def test_condition():
-    """Test to ensure basic conditionals get converted in a jiphy"""
+    """Test to ensure basic while loop gets converted in a jiphy"""
     two_way_conversion_test("if something is True:\n"
                             "    do_something()\n"
                             "\n",
                             "if (something === true) {\n"
+                            "    do_something();\n"
+                            "}\n")
+
+
+def test_while_loop():
+    """Test to ensure basic conditionals get converted in a jiphy"""
+    two_way_conversion_test("while something is True:\n"
+                            "    do_something()\n"
+                            "\n",
+                            "while (something === true) {\n"
                             "    do_something();\n"
                             "}\n")
 
