@@ -290,12 +290,8 @@ class SingleLineComment(Handler):
 
 @routes.add('import pdb; pdb.set_trace()\n', 'import pdb;pdb.set_trace()\n', 'debugger;\n')
 class BreakPoint(Handler):
-
-    def _javascript(self):
-        return "debugger;\n"
-
-    def _python(self):
-        return "import pdb; pdb.set_trace()\n"
+    javascript = 'debugger;\n'
+    python = 'import pdb; pdb.set_trace()\n'
 
 
 @routes.add("import ")
@@ -324,52 +320,32 @@ class PythonImport(Handler):
 
 @routes.add("): pass\n", ") {}\n")
 class Pass(Handler):
-
-    def _python(self):
-        return "): pass\n"
-
-    def _javascript(self):
-        return ") {}\n"
+    javascript = ') {}\n'
+    python = '): pass\n'
 
 
 @routes.add("True", "true")
 class TrueStatement(Handler):
-
-    def _python(self):
-        return "True"
-
-    def _javascript(self):
-        return "true"
+    javascript = 'true'
+    python = 'True'
 
 
 @routes.add("False", "false")
 class FalseStatement(Handler):
-
-    def _python(self):
-        return "False"
-
-    def _javascript(self):
-        return "false"
+    javascript = 'false'
+    python = 'False'
 
 
 @routes.add('None', 'null')
 class NoneStatement(Handler):
-
-    def _python(self):
-        return "None"
-
-    def _javascript(self):
-        return "null"
+    javascript = 'null'
+    python = 'None'
 
 
 @routes.add('print', 'console.log')
 class PrintFunction(Handler):
-
-    def _python(self):
-        return "print"
-
-    def _javascript(self):
-        return "console.log"
+    javascript = 'console.log'
+    python = 'print'
 
 
 @routes.add('var ')
@@ -429,12 +405,8 @@ class ExportFunction(Handler):
 
 @routes.add('del ', 'delete ')
 class DeleteStatement(Handler):
-
-    def _javascript(self):
-        return "delete "
-
-    def _python(self):
-        return "del "
+    javascript = 'delete '
+    python = 'del '
 
 
 @routes.add('if (', 'if ')
@@ -469,12 +441,8 @@ class IfStatement(Handler):
 
 @routes.add('for (', 'for ')
 class ForStatement(Handler):
-
-    def _python(self):
-        return 'for '
-
-    def _javascript(self):
-        return 'for ('
+    javascript = 'for ('
+    python = 'for '
 
 
 @routes.add('elif ', '^} else if (')
@@ -631,79 +599,49 @@ class Dictionary(Handler):
 
 @routes.add(' is not ', ' !== ')
 class IsNotStatement(Handler):
-
-    def _python(self):
-        return ' is not '
-
-    def _javascript(self):
-        return ' !== '
+    javascript = ' !== '
+    python = ' is not '
 
 
 @routes.add(' is ', ' === ')
 class IsStatement(Handler):
-
-    def _python(self):
-        return ' is '
-
-    def _javascript(self):
-        return ' === '
+    javascript = ' === '
+    python = ' is '
 
 
 @routes.add(' not ', ' !')
 class NotStatement(Handler):
-
-    def _python(self):
-        return ' not '
-
-    def _javascript(self):
-        return ' !'
+    javascript = ' !'
+    python = ' not '
 
 
 @routes.add('not ', '!')
 class NotStatement(Handler):
-
-    def _python(self):
-        return 'not '
-
-    def _javascript(self):
-        return '!'
+    python = 'not '
+    javascript = '!'
 
 
 @routes.add('Unset', 'undefined')
 class Unset(Handler):
-
-    def _python(self):
-        return 'Unset'
-
-    def _javascript(self):
-        return 'undefined'
+    javascript = 'undefined'
+    python = 'Unset'
 
 
 @routes.add('and ', '&& ')
 class AndKeyword(Handler):
-
-    def _python(self):
-        return 'and '
-
-    def _javascript(self):
-        return '&& '
+    javascript = '&& '
+    python = 'and '
 
 
 @routes.add('or ', '|| ')
 class OrKeyword(Handler):
-
-    def _python(self):
-        return 'or '
-
-    def _javascript(self):
-        return '|| '
+    javascript = '|| '
+    python = 'or '
 
 
 @routes.add('pass\n')
 class PythonNoop(Handler):
-
-    def _javascript(self):
-        return '\n'
+    javascript = '\n'
 
 
 @routes.add(';\n')
