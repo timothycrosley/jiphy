@@ -6,4 +6,8 @@ python:
   - "3.2"
   - "3.3"
   - "3.4"
+install:
+    - pip install python-coveralls
 script: python setup.py test
+after_success:
+  - coveralls
