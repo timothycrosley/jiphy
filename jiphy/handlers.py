@@ -740,8 +740,9 @@ class Decorator(Handler):
 
 @routes.add('.append(', '.push(')
 class Append(Handler):
-    javascript = '.push('
-    python = '.append('
+    javascript = '.push'
+    python = '.append'
+    back_track = 1
 
 
 @routes.add('raise ', 'throw ')
