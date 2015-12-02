@@ -301,3 +301,20 @@ def test_raise_conversion():
     """Tests to ensure append/push get converted in desired mannor"""
     two_way_conversion_test("raise 'error'\n",
                             "throw 'error';\n")
+
+
+def test_for_loop_in_function_conversion():
+    """Tests to ensure a for loop within a function gets converted as expected"""
+
+    two_way_conversion_test('def clear():\n'
+                            '   grid = []\n'
+                            '   for i in range(0, config.SIZE):\n'
+                            '       grid.append(0)\n',
+                            '\n'
+                            '\n',
+                            'function clear() {\n'
+                            '   grid = [];\n'
+                            '   for(i in range(0, config.SIZE)) {\n'
+                            '       grid.push(0);\n',
+                            '   }\n'
+                            '}\n')
