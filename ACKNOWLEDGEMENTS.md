@@ -8,7 +8,7 @@ Plugin Writers
 
 Notable Bug Reporters
 ===================
-- TBD
+- Dimitri (@Dimitri0xff)
 
 Code Contributors
 ===================
