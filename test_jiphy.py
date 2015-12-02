@@ -34,6 +34,7 @@ def two_way_conversion_test(python_code, javascript_code, expect_python=None, ex
     expect_python = expect_python or python_code
 
     assert jiphy.to.javascript(python_code) == expect_javascript
+    print(repr(jiphy.to.python(javascript_code)))
     assert jiphy.to.python(javascript_code) == expect_python
 
     assert jiphy.to.javascript(javascript_code) == javascript_code
@@ -307,14 +308,17 @@ def test_for_loop_in_function_conversion():
     """Tests to ensure a for loop within a function gets converted as expected"""
 
     two_way_conversion_test('def clear():\n'
-                            '   grid = []\n'
-                            '   for i in range(0, config.SIZE):\n'
-                            '       grid.append(0)\n',
-                            '\n'
-                            '\n',
+                            '    grid = []\n'
+                            '    for i in range(0, config.SIZE):\n'
+                            '        grid.append(0)\n\n\n\n\n',
                             'function clear() {\n'
-                            '   grid = [];\n'
-                            '   for(i in range(0, config.SIZE)) {\n'
-                            '       grid.push(0);\n',
-                            '   }\n'
-                            '}\n')
+                            '    grid = [];\n'
+                            '    for (i in range(0, config.SIZE)) {\n'
+                            '        grid.push(0);\n'
+                            '    }\n'
+                            '}\n\n\n',
+                            'def clear():\n'
+                            '    grid = []\n'
+                            '    for i in range(0, config.SIZE):\n'
+                            '        grid.append(0)\n'
+                            '    \n\n\n\n')
