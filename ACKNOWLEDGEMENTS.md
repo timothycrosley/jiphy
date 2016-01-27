@@ -12,7 +12,7 @@ Notable Bug Reporters
 
 Code Contributors
 ===================
-- TBD
+- Alon Niv (@oakfang)
 
 Documenters
 ===================
