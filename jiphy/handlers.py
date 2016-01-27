@@ -446,7 +446,7 @@ class ForStatement(Handler):
 
 
 @routes.add('while (', 'while ')
-class ForStatement(Handler):
+class WhileStatement(Handler):
     javascript = 'while ('
     python = 'while '
 
