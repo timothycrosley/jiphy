@@ -633,15 +633,15 @@ class Unset(Handler):
     python = 'Unset'
 
 
-@routes.add('and ', '&& ')
+@routes.add(' and ', ' && ')
 class AndKeyword(Handler):
-    javascript = '&& '
-    python = 'and '
+    javascript = ' && '
+    python = ' and '
 
 
-@routes.add('or ', '|| ')
+@routes.add(' or ', ' || ')
 class OrKeyword(Handler):
-    javascript = '|| '
+    javascript = ' || '
     python = 'or '
 
 
