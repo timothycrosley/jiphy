@@ -1,6 +1,5 @@
 ![jiphy](https://raw.github.com/timothycrosley/jiphy/master/logo.png)
 =====
-
 [![PyPI version](https://badge.fury.io/py/jiphy.png)](http://badge.fury.io/py/jiphy)
 [![Build Status](https://travis-ci.org/timothycrosley/jiphy.png?branch=master)](https://travis-ci.org/timothycrosley/jiphy)
 [![Coverage Status](https://coveralls.io/repos/timothycrosley/jiphy/badge.svg?branch=develop&service=github)](https://coveralls.io/github/timothycrosley/jiphy?branch=develop)
